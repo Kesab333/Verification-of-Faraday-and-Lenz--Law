@@ -1,90 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Interactive verification of Faraday's and Lenz's laws of electromagnetic induction." />
-    <title>Faraday's and Lenz's Law | SOLVE Virtual Lab</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/general.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <script defer src="js/physics.js"></script>
-    <script defer src="js/app.js"></script>
-  </head>
-  <body>
-    <header class="title-div-container">
-      <div class="title-div">
-        <div class="logo-div"><img src="images/nitk.svg" alt="NITK logo" class="logo" /></div>
-        <h1>Verification of Faraday's &amp; Lenz's Law</h1>
-      </div>
-    </header>
 
-    <div class="container">
-      <nav class="sidebar" aria-label="Experiment sections">
-        <ul class="tool-menu">
-          <li class="tool-list"><a class="tool-link icon-simulation" href="#simulation" aria-label="Simulation"></a><span>Simulation</span></li>
-          <li class="tool-list"><a class="tool-link icon-diagram" href="#diagram" aria-label="Diagram"></a><span>Diagram</span></li>
-          <li class="tool-list"><a class="tool-link icon-calculation" href="#calculation" aria-label="Calculation"></a><span>Calculation</span></li>
-          <li class="tool-list"><a class="tool-link icon-formula" href="#formula" aria-label="Formula"></a><span>Formula</span></li>
-          <li class="tool-list"><a class="tool-link icon-results" href="#observations" aria-label="Results"></a><span>Results</span></li>
-          <li class="tool-list"><button id="railPlayButton" class="rail-button icon-play" aria-label="Start simulation"></button><span id="railPlayLabel">Start</span></li>
-          <li class="tool-list"><button id="railGraphButton" class="rail-button icon-graph" aria-label="Show graphs"></button><span>Graph</span></li>
-        </ul>
-      </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Interactive verification of Faraday's and Lenz's laws of electromagnetic induction." />
+  <title>Faraday's and Lenz's Law | SOLVE Virtual Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="images/nitk.ico" />
+  <link rel="stylesheet" href="css/general.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/physics.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
 
-      <main class="main">
-        <div class="main-section">
-          <section id="simulation" class="main__task-div simulation-card">
-            <h2 class="task-title">Simulation</h2>
-            <div class="simulation-toolbar">
-              <div class="status-chip"><span class="status-dot" id="statusDot"></span><span id="experimentStatus">Ready to release</span></div>
-              <div class="button-group">
-                <button id="releaseButton" class="control-button primary">Release</button>
-                <button id="pauseButton" class="control-button">Pause</button>
-                <button id="resetButton" class="control-button">Reset</button>
-              </div>
+<body>
+  <header class="title-div-container">
+    <div class="title-div">
+      <div class="logo-div"><img src="images/nitk.ico" alt="NITK logo" class="logo" /></div>
+      <h1>Verification of Faraday's &amp; Lenz's Law</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar" aria-label="Experiment sections">
+      <ul class="tool-menu">
+        <li class="tool-list"><button class="tool-link icon-diagram workspace-link" data-workspace="diagram"
+            aria-label="Diagram"></button><span>Diagram</span></li>
+        <li class="tool-list"><button class="tool-link icon-simulation workspace-link is-active" data-workspace="simulation"
+            aria-label="Simulation"></button><span>Simulation</span></li>
+        <li class="tool-list"><button class="tool-link icon-formula workspace-link" data-workspace="formula"
+            aria-label="Formula"></button><span>Formula</span></li>
+        <li class="tool-list"><button class="tool-link icon-calculation workspace-link" data-workspace="calculation"
+            aria-label="Calculation"></button><span>Calculation</span></li>
+        <li class="tool-list"><button id="railGraphButton" class="rail-button icon-graph workspace-link" data-workspace="graphs"
+            aria-label="Show graphs"></button><span>Graph</span></li>
+        <li class="tool-list"><button class="tool-link icon-results workspace-link" data-workspace="results"
+            aria-label="Results"></button><span>Results</span></li>
+        <li class="tool-list"><button class="tool-link icon-observation workspace-link" data-workspace="observation"
+            aria-label="Observation"></button><span>Observation</span></li>
+        <li class="tool-list"><button class="tool-link icon-experiments workspace-link" data-workspace="experiments"
+            aria-label="Experiments"></button><span>Experiment</span></li>
+      </ul>
+    </nav>
+
+    <main class="main">
+      <div class="main-section">
+        <section id="simulation" class="main__task-div simulation-card">
+          <div class="task-heading"><h2 id="workspaceTitle" class="task-title">Simulation</h2><div class="heading-actions">
+            <button id="helpButton" class="heading-button help-button" aria-label="Open simulation help">?</button>
+            <button id="fullscreenButton" class="heading-button" aria-label="View website fullscreen" title="Fullscreen">⛶</button>
+          </div></div>
+          <div class="simulation-toolbar">
+            <div class="status-chip"><span class="status-dot" id="statusDot"></span><span id="experimentStatus">Ready to
+                release</span></div>
+            <div class="button-group">
+              <button id="releaseButton" class="control-button primary">Release</button>
+              <button id="pauseButton" class="control-button">Pause</button>
+              <button id="resetButton" class="control-button">Reset</button>
             </div>
-            <div class="lab-stage">
-              <canvas id="apparatusCanvas" aria-label="Electromagnetic induction apparatus"></canvas>
-              <aside class="experiment-sidepanel" aria-label="Experiment controls and results">
+          </div>
+          <div class="lab-stage">
+            <div id="workspaceViewport" class="apparatus-wrap"><canvas id="apparatusCanvas"
+                aria-label="Electromagnetic induction apparatus. Drag the magnet frame sideways to displace it."></canvas>
               <div class="meter-panel" aria-label="Voltmeter reading">
                 <p class="meter-label">Digital Voltmeter</p>
                 <output id="voltmeter" class="voltmeter">+0.000 V</output>
-                <div class="polarity-row"><span id="positiveLead" class="lead-label">+</span><span id="polarityText">No induced EMF</span><span id="negativeLead" class="lead-label">−</span></div>
-                <div class="legend"><span><i class="legend-line flux"></i>Flux</span><span><i class="legend-line current"></i>Induced current</span></div>
+                <div class="polarity-row"><span id="positiveLead" class="lead-label">+</span><span id="polarityText">No
+                    induced EMF</span><span id="negativeLead" class="lead-label">−</span></div>
+                <div class="legend"><span><i class="legend-line flux"></i>Flux</span><span><i
+                      class="legend-line current"></i>Induced current</span></div>
               </div>
-              <details id="variables" class="side-details" open><summary>Controls</summary><div class="variables-sections">
-                <label class="var-div" for="angleControl"><span>Initial Angle</span><output id="angleOutput">35°</output><input id="angleControl" type="range" min="10" max="55" value="35" step="1" /></label>
-                <label class="var-div" for="turnsControl"><span>Coil Turns</span><output id="turnsOutput">250</output><input id="turnsControl" type="range" min="100" max="500" value="250" step="25" /></label>
-                <label class="var-div" for="strengthControl"><span>Magnet Strength</span><output id="strengthOutput">1.0 T</output><input id="strengthControl" type="range" min="0.5" max="1.5" value="1" step="0.1" /></label>
-                <label class="var-div" for="dampingControl"><span>Damping Factor</span><output id="dampingOutput">0.08</output><input id="dampingControl" type="range" min="0.02" max="0.18" value="0.08" step="0.01" /></label>
-                <label class="var-div" for="speedControl"><span>Simulation Speed</span><output id="speedOutput">1.0×</output><input id="speedControl" type="range" min="0.5" max="2" value="1" step="0.25" /></label>
-              </div></details>
-              <details id="observations" class="side-details"><summary>Results</summary><div class="readout-grid">
-                <p>Angle <strong id="angleValue">35.0°</strong></p><p>Velocity <strong id="velocityValue">0.000 rad/s</strong></p><p>Flux <strong id="fluxValue">0.000 mWb</strong></p><p>EMF <strong id="emfValue">+0.000 V</strong></p><p>Oscillations <strong id="countValue">0</strong></p><p>Motion <strong id="motionValue">Stationary</strong></p>
-              </div><div class="observation-box"><span class="observation-heading">Observation</span><p id="observationText">Set an initial angle, then release the frame to begin the experiment.</p></div></details>
+              <p id="dragHint" class="drag-hint">Drag the frame sideways to set its initial displacement.</p>
+            </div>
+            <aside class="experiment-sidepanel" aria-label="Experiment controls and results">
+              <details id="variables" class="side-details">
+                <summary><span>Controls</span><button id="controlsLockButton" class="controls-lock" type="button" aria-pressed="false" title="Lock variable changes while oscillating">🔓 Lock</button></summary>
+                <div class="variables-sections">
+                  <label class="var-div" for="angleControl"><span>Initial Angle</span><output
+                      id="angleOutput">35°</output><input id="angleControl" type="range" min="10" max="55" value="35"
+                      step="1" /></label>
+                  <label class="var-div" for="turnsControl"><span>Coil Turns</span><output
+                      id="turnsOutput">250</output><input id="turnsControl" type="range" min="100" max="500" value="250"
+                      step="25" /></label>
+                  <label class="var-div" for="strengthControl"><span>Magnet Strength</span><output
+                      id="strengthOutput">1.0 T</output><input id="strengthControl" type="range" min="0.5" max="1.5"
+                      value="1" step="0.1" /></label>
+                  <label class="var-div" for="dampingControl"><span>Damping Factor</span><output
+                      id="dampingOutput">0.08</output><input id="dampingControl" type="range" min="0.02" max="0.18"
+                      value="0.08" step="0.01" /></label>
+                  <label class="var-div" for="speedControl"><span>Simulation Speed</span><output
+                      id="speedOutput">1.0×</output><input id="speedControl" type="range" min="0.5" max="2" value="1"
+                      step="0.25" /></label>
+                </div>
+              </details>
+              <details id="observations" class="side-details">
+                <summary>Results</summary>
+                <div class="readout-grid">
+                  <p>Angle <strong id="angleValue">35.0°</strong></p>
+                  <p>Velocity <strong id="velocityValue">0.000 rad/s</strong></p>
+                  <p>Flux <strong id="fluxValue">0.000 mWb</strong></p>
+                  <p>EMF <strong id="emfValue">+0.000 V</strong></p>
+                  <p>Oscillations <strong id="countValue">0</strong></p>
+                  <p>Motion <strong id="motionValue">Stationary</strong></p>
+                </div>
+                <div class="heat-readout"><span>Electrical energy dissipated</span><strong id="heatValue">0.000
+                    mJ</strong><i class="heat-bar"><b id="heatFill"></b></i></div>
+                <div class="observation-box"><span class="observation-heading">Observation</span>
+                  <p id="observationText">Drag the frame to one side, then release it to begin the experiment.</p>
+                </div>
+                <div class="emf-table-wrap">
+                  <p class="table-heading">Alternating EMF readings</p>
+                  <table class="emf-table">
+                    <thead>
+                      <tr>
+                        <th>Peak</th>
+                        <th>Time</th>
+                        <th>EMF</th>
+                      </tr>
+                    </thead>
+                    <tbody id="emfReadings">
+                      <tr>
+                        <td colspan="3">Release the frame to record readings.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </aside>
+          </div>
+          <p class="apparatus-caption">Semicircular frame with bar magnet, stationary copper coil, connecting wires and
+            digital voltmeter.</p>
+        </section>
+
+        <section id="diagram" class="main__task-div reference-card">
+          <h2 class="task-title">Diagram</h2><img src="images/Fig 1.png"
+            alt="Electromagnetic induction apparatus diagram" />
+        </section>
+        <section id="calculation" class="main__task-div reference-card">
+          <h2 class="task-title">Calculation</h2>
+          <div class="reference-content">
+            <p>Measure the peak EMF for each trial and compare it with the magnet's angular velocity.</p>
+            <p><strong>Observation:</strong> peak EMF increases as the magnet passes the equilibrium position faster.
+            </p>
+            <p><strong>Energy:</strong> electrical energy produced in the coil is dissipated as heat, reducing the
+              mechanical amplitude.</p>
+          </div>
+        </section>
+        <section id="formula" class="main__task-div reference-card">
+          <h2 class="task-title">Formula</h2>
+          <div class="reference-content formula-content">
+            <p>Φ = B A cos θ</p>
+            <p>ε = −N dΦ/dt</p>
+            <p>τ<sub>induced</sub> opposes the change in flux</p>
+          </div>
+        </section>
+
+        <section id="graphs" class="main__task-div graphs-card is-hidden">
+          <h2 class="task-title">Live Graphs</h2>
+          <div class="graph-grid">
+            <figure>
+              <figcaption>Induced EMF vs Time <span class="graph-unit">(V)</span></figcaption><canvas id="emfGraph"
+                aria-label="Induced EMF versus time graph"></canvas>
+            </figure>
+            <figure>
+              <figcaption>Angular Displacement vs Time <span class="graph-unit">(°)</span></figcaption><canvas
+                id="angleGraph" aria-label="Angular displacement versus time graph"></canvas>
+            </figure>
+          </div>
+        </section>
+
+        <section id="experiments" class="main__task-div reference-card experiments-card">
+          <h2 class="task-title">Experiments</h2>
+          <div class="circuit-builder" data-circuit-builder>
+            <div class="builder-toolbar">
+              <div><span class="builder-kicker">Open-ended practical</span><h3>Electromagnetic induction bench</h3></div>
+              <div class="builder-actions"><output class="builder-status" data-builder-status>Place parts and join their terminals.</output><button type="button" class="bench-button" data-clear-wires>Clear wires</button><button type="button" class="bench-button primary" data-reset-bench>Reset bench</button></div>
+            </div>
+            <div class="builder-layout">
+              <div class="workbench" data-workbench aria-label="Circuit workbench. Drag apparatus to arrange it, then select two terminals to make a wire.">
+                <div class="bench-surface-label">FREE-WIRE WORKSPACE <span>Drag apparatus · click two brass terminals to connect</span></div>
+                <svg class="wire-layer" data-wire-layer aria-hidden="true"></svg>
+
+                <div class="apparatus-item coil-device" data-device="coil" style="--x:8%;--y:27%;">
+                  <span class="device-name">INDUCTION COIL</span><span class="terminal terminal-top" data-terminal="coil-positive" title="Coil positive terminal"></span><span class="terminal terminal-bottom" data-terminal="coil-negative" title="Coil negative terminal"></span>
+                  <div class="coil-core"></div><div class="coil-windings"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="coil-tag">N turns</span>
+                </div>
+
+                <div class="apparatus-item magnet-device" data-device="magnet" style="--x:12%;--y:65%;">
+                  <span class="device-name">BAR MAGNET</span><div class="magnet-body"><b>N</b><b>S</b></div><span class="magnet-arrow">↕ Move through coil</span>
+                </div>
+
+                <div class="apparatus-item diode-device" data-device="diode" style="--x:38%;--y:20%;">
+                  <span class="device-name">DIODE</span><span class="terminal terminal-left" data-terminal="diode-anode" title="Anode"></span><span class="terminal terminal-right" data-terminal="diode-cathode" title="Cathode"></span><div class="diode-body"><i></i></div><span class="band-mark"></span>
+                </div>
+
+                <div class="apparatus-item capacitor-device" data-device="capacitor" style="--x:44%;--y:59%;">
+                  <span class="device-name">CAPACITOR</span><span class="terminal terminal-left" data-terminal="capacitor-positive" title="Capacitor positive terminal"></span><span class="terminal terminal-right" data-terminal="capacitor-negative" title="Capacitor negative terminal"></span><div class="capacitor-can"><b>+</b><i></i><i></i><em>470 µF</em></div>
+                </div>
+
+                <div class="apparatus-item switch-device" data-device="switch" style="--x:66%;--y:20%;">
+                  <span class="device-name">KNIFE SWITCH</span><span class="terminal terminal-left" data-terminal="switch-a" title="Switch terminal A"></span><span class="terminal terminal-right" data-terminal="switch-b" title="Switch terminal B"></span><button type="button" class="switch-lever" data-switch aria-label="Toggle knife switch"><i></i></button><span class="switch-state">OPEN</span>
+                </div>
+
+                <div class="apparatus-item meter-device ammeter-device" data-device="ammeter" style="--x:70%;--y:55%;">
+                  <span class="device-name">MILLIAMMETER</span><span class="terminal terminal-left" data-terminal="ammeter-negative" title="Ammeter negative terminal"></span><span class="terminal terminal-right" data-terminal="ammeter-positive" title="Ammeter positive terminal"></span><div class="analog-meter"><span class="meter-scale">mA</span><i class="needle"></i><b class="meter-reading" data-ammeter-reading>0.0</b></div>
+                </div>
+
+                <div class="apparatus-item meter-device voltmeter-device" data-device="voltmeter" style="--x:78%;--y:76%;">
+                  <span class="device-name">VOLTMETER</span><span class="terminal terminal-left" data-terminal="voltmeter-negative" title="Voltmeter negative terminal"></span><span class="terminal terminal-right" data-terminal="voltmeter-positive" title="Voltmeter positive terminal"></span><div class="digital-meter"><span>V</span><b data-voltmeter-reading>0.000</b><i></i></div>
+                </div>
+
+                <div class="apparatus-item led-device" data-device="led" style="--x:28%;--y:76%;">
+                  <span class="device-name">LED LAMP</span><span class="terminal terminal-left" data-terminal="led-anode" title="LED anode"></span><span class="terminal terminal-right" data-terminal="led-cathode" title="LED cathode"></span><div class="led-lens"><i></i></div><div class="led-pins"></div>
+                </div>
+              </div>
+              <aside class="bench-controls" aria-label="Experiment controls">
+                <div class="control-heading"><span>Controls</span><small>Change your setup variables</small></div>
+                <label class="bench-control"><span>Coil turns <output data-control-output="turns">250</output></span><input data-bench-control="turns" type="range" min="100" max="600" step="50" value="250"></label>
+                <label class="bench-control"><span>Magnet strength <output data-control-output="strength">1.0 T</output></span><input data-bench-control="strength" type="range" min="0.5" max="1.5" step="0.1" value="1"></label>
+                <label class="bench-control"><span>Motion speed <output data-control-output="speed">Medium</output></span><input data-bench-control="speed" type="range" min="1" max="3" step="1" value="2"></label>
+                <label class="bench-control"><span>Capacitance <output data-control-output="capacitance">470 µF</output></span><input data-bench-control="capacitance" type="range" min="100" max="1000" step="10" value="470"></label>
+                <div class="connection-guide"><b>How to wire</b><p>Click a brass terminal, then click another terminal. Drag any object to arrange your circuit. Move the magnet close to or through the coil after closing the switch.</p></div>
+                <div class="bench-readout"><span>Live induced output</span><strong data-builder-output>0.000 V</strong><small data-builder-current>0.0 mA · Circuit open</small></div>
               </aside>
             </div>
-            <p class="apparatus-caption">Semicircular frame with bar magnet, stationary copper coil, connecting wires and digital voltmeter.</p>
-          </section>
+            <p class="bench-caption">A virtual practical bench with coil, bar magnet, diode, capacitor, LED, switch, ammeter and voltmeter. Build your own circuit—there is no fixed layout.</p>
+          </div>
+        </section>
 
-          <section id="diagram" class="main__task-div reference-card"><h2 class="task-title">Diagram</h2><img src="images/Fig 1.png" alt="Electromagnetic induction apparatus diagram" /></section>
-          <section id="calculation" class="main__task-div reference-card"><h2 class="task-title">Calculation</h2><div class="reference-content"><p>Measure the peak EMF for each trial and compare it with the magnet's angular velocity.</p><p><strong>Observation:</strong> peak EMF increases as the magnet passes the equilibrium position faster.</p></div></section>
-          <section id="formula" class="main__task-div reference-card"><h2 class="task-title">Formula</h2><div class="reference-content formula-content"><p>Φ = B A cos θ</p><p>ε = −N dΦ/dt</p><p>τ<sub>induced</sub> opposes the change in flux</p></div></section>
+        <section id="observation" class="main__task-div reference-card observation-card">
+          <h2 class="task-title">Observation</h2>
+          <div class="reference-content">
+            <p>When the magnet moves toward or away from the coil, the magnetic flux changes and the meter registers an induced EMF.</p>
+            <p>The polarity reverses as the motion reverses. The EMF falls to nearly zero at each turning point because the magnet is momentarily stationary.</p>
+          </div>
+        </section>
 
-          <section id="graphs" class="main__task-div graphs-card is-hidden">
-            <h2 class="task-title">Live Graphs</h2>
-            <div class="graph-grid">
-              <figure><figcaption>Induced EMF vs Time <span class="graph-unit">(V)</span></figcaption><canvas id="emfGraph" aria-label="Induced EMF versus time graph"></canvas></figure>
-              <figure><figcaption>Angular Displacement vs Time <span class="graph-unit">(°)</span></figcaption><canvas id="angleGraph" aria-label="Angular displacement versus time graph"></canvas></figure>
-            </div>
-          </section>
-
-          <footer class="main__task-div footer"><p>Copyright © SOLVE The Virtual Lab @ NITK Surathkal</p></footer>
-        </div>
-      </main>
+        <footer class="main__task-div footer">
+          <p>Copyright © SOLVE The Virtual Lab @ NITK Surathkal</p>
+        </footer>
+      </div>
+    </main>
+  </div>
+  <div id="helpOverlay" class="help-overlay" hidden aria-hidden="true">
+    <div id="helpPopover" class="help-popover" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <p class="help-step" id="helpStep">Guide</p><h3 id="helpTitle">Simulation guide</h3><p id="helpText"></p>
+      <div class="help-actions"><button id="closeHelpButton" class="control-button">Close</button><button id="nextHelpButton" class="control-button primary">Next</button></div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
