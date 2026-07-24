@@ -13,8 +13,13 @@
   <link rel="icon" href="images/nitk.ico" />
   <link rel="stylesheet" href="css/general.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <script defer src="js/physics.js"></script>
-  <script defer src="js/app.js"></script>
+  <script type="importmap">
+    { "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    } }
+  </script>
+  <script type="module" src="js/app.js"></script>
 </head>
 
 <body>
@@ -64,9 +69,9 @@
             </div>
           </div>
           <div class="lab-stage">
-            <div id="workspaceViewport" class="workspace-viewport"><div id="simulationWindow" class="apparatus-wrap"><canvas id="apparatusCanvas"
-                aria-label="Electromagnetic induction apparatus. Drag the magnet frame sideways to displace it."></canvas>
-              <div class="meter-panel" aria-label="Voltmeter reading">
+            <div id="workspaceViewport" class="workspace-viewport"><div id="simulationWindow" class="apparatus-wrap">
+              <div id="threeViewport" class="three-viewport" role="img" aria-label="Interactive three-dimensional electromagnetic induction apparatus. Drag to orbit; in Manual mode drag the magnet frame to set its position."></div>
+              <div class="meter-panel" aria-label="Legacy voltmeter reading" hidden>
                 <p class="meter-label">Digital Voltmeter</p>
                 <output id="voltmeter" class="voltmeter">+0.000 V</output>
                 <div class="polarity-row"><span id="positiveLead" class="lead-label">+</span><span id="polarityText">No
@@ -74,15 +79,42 @@
                 <div class="legend"><span><i class="legend-line flux"></i>Flux</span><span><i
                       class="legend-line current"></i>Induced current</span></div>
               </div>
-              <p id="dragHint" class="drag-hint">Drag the frame sideways to set its initial displacement.</p>
+              <p id="dragHint" class="drag-hint">Manual mode: drag the frame to position the magnet. Drag empty space to orbit the view.</p>
             </div>
             </div>
             <aside class="experiment-sidepanel" aria-label="Experiment controls and results">
               <details id="variables" class="side-details">
                 <summary><span>Controls</span><button id="controlsLockButton" class="controls-lock" type="button" aria-pressed="false" title="Lock variable changes while oscillating">🔓 Lock</button></summary>
+                <div class="control-presets" aria-label="Experiment presets">
+                  <p>Presets</p>
+                  <div class="preset-grid">
+                    <button class="preset-button" data-preset="entering" type="button">Magnet entering coil</button>
+                    <button class="preset-button" data-preset="leaving" type="button">Magnet leaving coil</button>
+                    <button class="preset-button" data-preset="strong" type="button">Strong magnet</button>
+                    <button class="preset-button" data-preset="weak" type="button">Weak magnet</button>
+                    <button class="preset-button" data-preset="fast" type="button">Fast movement</button>
+                    <button class="preset-button" data-preset="slow" type="button">Slow movement</button>
+                    <button class="preset-button" data-preset="manyTurns" type="button">Many turns</button>
+                    <button class="preset-button" data-preset="fewTurns" type="button">Few turns</button>
+                    <button class="preset-button" data-preset="reverse" type="button">Reverse magnet poles</button>
+                  </div>
+                </div>
+                <div class="mode-controls" aria-label="Motion mode">
+                  <p>Mode</p>
+                  <div class="mode-button-group" role="group" aria-label="Motion mode">
+                    <button class="mode-button is-active" data-mode="oscillate" type="button">Oscillate</button>
+                    <button class="mode-button" data-mode="freefall" type="button">Freefall</button>
+                    <button class="mode-button" data-mode="manual" type="button">Manual</button>
+                  </div>
+                </div>
+                <div class="display-controls" aria-label="Simulation overlays">
+                  <p>Show</p>
+                  <label><input id="magneticFieldToggle" type="checkbox" checked /> Magnetic fields</label>
+                  <label><input id="inducedCurrentToggle" type="checkbox" checked /> Induced current</label>
+                </div>
                 <div class="variables-sections">
                   <label class="var-div" for="angleControl"><span>Initial Angle</span><output
-                      id="angleOutput">35°</output><input id="angleControl" type="range" min="10" max="55" value="35"
+                      id="angleOutput">22°</output><input id="angleControl" type="range" min="5" max="25" value="22"
                       step="1" /></label>
                   <label class="var-div" for="turnsControl"><span>Coil Turns</span><output
                       id="turnsOutput">250</output><input id="turnsControl" type="range" min="100" max="500" value="250"
@@ -101,10 +133,12 @@
               <details id="observations" class="side-details">
                 <summary>Results</summary>
                 <div class="readout-grid">
-                  <p>Angle <strong id="angleValue">35.0°</strong></p>
-                  <p>Velocity <strong id="velocityValue">0.000 rad/s</strong></p>
+                  <p>Angle <strong id="angleValue">22.0°</strong></p>
+                  <p id="velocityLabel">Velocity <strong id="velocityValue">0.000 rad/s</strong></p>
                   <p>Flux <strong id="fluxValue">0.000 mWb</strong></p>
                   <p>EMF <strong id="emfValue">+0.000 V</strong></p>
+                  <p>Field at coil <strong id="fieldValue">0.0 mT</strong></p>
+                  <p>Induced current <strong id="currentValue">0.000 mA</strong></p>
                   <p>Oscillations <strong id="countValue">0</strong></p>
                   <p>Motion <strong id="motionValue">Stationary</strong></p>
                 </div>
@@ -133,8 +167,8 @@
               </details>
             </aside>
           </div>
-          <p class="apparatus-caption">Move the semicircular frame so its bar magnet passes the stationary copper coil;
-            the changing magnetic flux induces the voltage shown on the digital voltmeter.</p>
+          <p class="apparatus-caption">The finite bar-magnet field sets the coil flux. The display uses Faraday's law,
+            ε = −N dΦ/dt, and shows the Lenz-law direction of the induced current.</p>
         </section>
 
         <section id="diagram" class="main__task-div reference-card">
@@ -161,9 +195,9 @@
         <section id="formula" class="main__task-div reference-card">
           <h2 class="task-title">Formula</h2>
           <div class="reference-content formula-content">
-            <p>Φ = B A cos θ</p>
+            <p>Φ = ∫ B · dA</p>
             <p>ε = −N dΦ/dt</p>
-            <p>τ<sub>induced</sub> opposes the change in flux</p>
+            <p>I = ε/R &nbsp; and &nbsp; τ<sub>induced</sub> opposes the change in flux</p>
           </div>
         </section>
 

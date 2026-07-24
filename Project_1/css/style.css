@@ -885,6 +885,95 @@
   min-width: 0;
 }
 
+.three-viewport {
+  width: 100%;
+  height: 44rem;
+  min-height: 44rem;
+  overflow: hidden;
+  background: #f4f4f0;
+}
+
+.three-viewport canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  cursor: grab;
+  touch-action: none;
+}
+
+.three-viewport canvas:active { cursor: grabbing; }
+
+.control-presets,
+.mode-controls,
+.display-controls {
+  padding: .85rem 1rem 0;
+}
+
+.control-presets > p,
+.mode-controls > p,
+.display-controls > p {
+  margin-bottom: .5rem;
+  color: #087d76;
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .45rem;
+}
+
+.preset-button,
+.mode-button {
+  min-height: 2.7rem;
+  padding: .35rem .5rem;
+  border: 1px solid #a9cecc;
+  border-radius: .35rem;
+  background: #f7fcfb;
+  color: #216764;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.preset-button:hover,
+.mode-button:hover { background: #e3f3f1; }
+
+.mode-button-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .45rem;
+}
+
+.mode-button.is-active {
+  border-color: #087d76;
+  background: #089b93;
+  color: #fff;
+}
+
+.display-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .45rem .8rem;
+  padding-bottom: .15rem;
+}
+
+.display-controls > p { flex-basis: 100%; }
+
+.display-controls label {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  color: #435352;
+  font-size: 1.1rem;
+}
+
+.display-controls input { accent-color: #089b93; }
+
 .apparatus-wrap canvas {
   cursor: grab;
   touch-action: none;
@@ -1019,6 +1108,11 @@
   .lab-stage canvas {
     min-height: 31rem;
     height: 31rem;
+  }
+
+  .three-viewport {
+    height: 31rem;
+    min-height: 31rem;
   }
 
   .experiment-sidepanel {
