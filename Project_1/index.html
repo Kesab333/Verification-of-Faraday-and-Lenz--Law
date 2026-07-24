@@ -64,7 +64,7 @@
             </div>
           </div>
           <div class="lab-stage">
-            <div id="workspaceViewport" class="apparatus-wrap"><canvas id="apparatusCanvas"
+            <div id="workspaceViewport" class="workspace-viewport"><div id="simulationWindow" class="apparatus-wrap"><canvas id="apparatusCanvas"
                 aria-label="Electromagnetic induction apparatus. Drag the magnet frame sideways to displace it."></canvas>
               <div class="meter-panel" aria-label="Voltmeter reading">
                 <p class="meter-label">Digital Voltmeter</p>
@@ -75,6 +75,7 @@
                       class="legend-line current"></i>Induced current</span></div>
               </div>
               <p id="dragHint" class="drag-hint">Drag the frame sideways to set its initial displacement.</p>
+            </div>
             </div>
             <aside class="experiment-sidepanel" aria-label="Experiment controls and results">
               <details id="variables" class="side-details">
@@ -132,13 +133,20 @@
               </details>
             </aside>
           </div>
-          <p class="apparatus-caption">Semicircular frame with bar magnet, stationary copper coil, connecting wires and
-            digital voltmeter.</p>
+          <p class="apparatus-caption">Move the semicircular frame so its bar magnet passes the stationary copper coil;
+            the changing magnetic flux induces the voltage shown on the digital voltmeter.</p>
         </section>
 
         <section id="diagram" class="main__task-div reference-card">
-          <h2 class="task-title">Diagram</h2><img src="images/Fig 1.png"
-            alt="Electromagnetic induction apparatus diagram" />
+          <h2 class="task-title">Diagram</h2><div class="diagram-figure"><img src="images/Fig 1.png" usemap="#circuit-labels"
+            alt="Electromagnetic induction apparatus diagram" /><map name="circuit-labels">
+              <area shape="rect" coords="650,130,785,315" href="#diagram" alt="Diode" title="D — Diode" />
+              <area shape="rect" coords="925,135,1115,310" href="#diagram" alt="Switch" title="SW — Switch" />
+              <area shape="rect" coords="790,440,985,705" href="#diagram" alt="Capacitor" title="Capacitor — Stores electrical charge" />
+              <area shape="rect" coords="1180,440,1445,700" href="#diagram" alt="Voltmeter" title="V — Voltmeter" />
+              <area shape="rect" coords="530,755,770,940" href="#diagram" alt="Milliammeter" title="mA — Milliammeter" />
+            </map></div>
+          <p class="diagram-caption">Fig. 1: Circuit diagram for the determination of voltage induced in the coil due to the magnet passing through it.</p>
         </section>
         <section id="calculation" class="main__task-div reference-card">
           <h2 class="task-title">Calculation</h2>
@@ -159,7 +167,7 @@
           </div>
         </section>
 
-        <section id="graphs" class="main__task-div graphs-card is-hidden">
+        <section id="graphs" class="main__task-div graphs-card">
           <h2 class="task-title">Live Graphs</h2>
           <div class="graph-grid">
             <figure>
@@ -175,60 +183,9 @@
 
         <section id="experiments" class="main__task-div reference-card experiments-card">
           <h2 class="task-title">Experiments</h2>
-          <div class="circuit-builder" data-circuit-builder>
-            <div class="builder-toolbar">
-              <div><span class="builder-kicker">Open-ended practical</span><h3>Electromagnetic induction bench</h3></div>
-              <div class="builder-actions"><output class="builder-status" data-builder-status>Place parts and join their terminals.</output><button type="button" class="bench-button" data-clear-wires>Clear wires</button><button type="button" class="bench-button primary" data-reset-bench>Reset bench</button></div>
-            </div>
-            <div class="builder-layout">
-              <div class="workbench" data-workbench aria-label="Circuit workbench. Drag apparatus to arrange it, then select two terminals to make a wire.">
-                <div class="bench-surface-label">FREE-WIRE WORKSPACE <span>Drag apparatus · click two brass terminals to connect</span></div>
-                <svg class="wire-layer" data-wire-layer aria-hidden="true"></svg>
-
-                <div class="apparatus-item coil-device" data-device="coil" style="--x:8%;--y:27%;">
-                  <span class="device-name">INDUCTION COIL</span><span class="terminal terminal-top" data-terminal="coil-positive" title="Coil positive terminal"></span><span class="terminal terminal-bottom" data-terminal="coil-negative" title="Coil negative terminal"></span>
-                  <div class="coil-core"></div><div class="coil-windings"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="coil-tag">N turns</span>
-                </div>
-
-                <div class="apparatus-item magnet-device" data-device="magnet" style="--x:12%;--y:65%;">
-                  <span class="device-name">BAR MAGNET</span><div class="magnet-body"><b>N</b><b>S</b></div><span class="magnet-arrow">↕ Move through coil</span>
-                </div>
-
-                <div class="apparatus-item diode-device" data-device="diode" style="--x:38%;--y:20%;">
-                  <span class="device-name">DIODE</span><span class="terminal terminal-left" data-terminal="diode-anode" title="Anode"></span><span class="terminal terminal-right" data-terminal="diode-cathode" title="Cathode"></span><div class="diode-body"><i></i></div><span class="band-mark"></span>
-                </div>
-
-                <div class="apparatus-item capacitor-device" data-device="capacitor" style="--x:44%;--y:59%;">
-                  <span class="device-name">CAPACITOR</span><span class="terminal terminal-left" data-terminal="capacitor-positive" title="Capacitor positive terminal"></span><span class="terminal terminal-right" data-terminal="capacitor-negative" title="Capacitor negative terminal"></span><div class="capacitor-can"><b>+</b><i></i><i></i><em>470 µF</em></div>
-                </div>
-
-                <div class="apparatus-item switch-device" data-device="switch" style="--x:66%;--y:20%;">
-                  <span class="device-name">KNIFE SWITCH</span><span class="terminal terminal-left" data-terminal="switch-a" title="Switch terminal A"></span><span class="terminal terminal-right" data-terminal="switch-b" title="Switch terminal B"></span><button type="button" class="switch-lever" data-switch aria-label="Toggle knife switch"><i></i></button><span class="switch-state">OPEN</span>
-                </div>
-
-                <div class="apparatus-item meter-device ammeter-device" data-device="ammeter" style="--x:70%;--y:55%;">
-                  <span class="device-name">MILLIAMMETER</span><span class="terminal terminal-left" data-terminal="ammeter-negative" title="Ammeter negative terminal"></span><span class="terminal terminal-right" data-terminal="ammeter-positive" title="Ammeter positive terminal"></span><div class="analog-meter"><span class="meter-scale">mA</span><i class="needle"></i><b class="meter-reading" data-ammeter-reading>0.0</b></div>
-                </div>
-
-                <div class="apparatus-item meter-device voltmeter-device" data-device="voltmeter" style="--x:78%;--y:76%;">
-                  <span class="device-name">VOLTMETER</span><span class="terminal terminal-left" data-terminal="voltmeter-negative" title="Voltmeter negative terminal"></span><span class="terminal terminal-right" data-terminal="voltmeter-positive" title="Voltmeter positive terminal"></span><div class="digital-meter"><span>V</span><b data-voltmeter-reading>0.000</b><i></i></div>
-                </div>
-
-                <div class="apparatus-item led-device" data-device="led" style="--x:28%;--y:76%;">
-                  <span class="device-name">LED LAMP</span><span class="terminal terminal-left" data-terminal="led-anode" title="LED anode"></span><span class="terminal terminal-right" data-terminal="led-cathode" title="LED cathode"></span><div class="led-lens"><i></i></div><div class="led-pins"></div>
-                </div>
-              </div>
-              <aside class="bench-controls" aria-label="Experiment controls">
-                <div class="control-heading"><span>Controls</span><small>Change your setup variables</small></div>
-                <label class="bench-control"><span>Coil turns <output data-control-output="turns">250</output></span><input data-bench-control="turns" type="range" min="100" max="600" step="50" value="250"></label>
-                <label class="bench-control"><span>Magnet strength <output data-control-output="strength">1.0 T</output></span><input data-bench-control="strength" type="range" min="0.5" max="1.5" step="0.1" value="1"></label>
-                <label class="bench-control"><span>Motion speed <output data-control-output="speed">Medium</output></span><input data-bench-control="speed" type="range" min="1" max="3" step="1" value="2"></label>
-                <label class="bench-control"><span>Capacitance <output data-control-output="capacitance">470 µF</output></span><input data-bench-control="capacitance" type="range" min="100" max="1000" step="10" value="470"></label>
-                <div class="connection-guide"><b>How to wire</b><p>Click a brass terminal, then click another terminal. Drag any object to arrange your circuit. Move the magnet close to or through the coil after closing the switch.</p></div>
-                <div class="bench-readout"><span>Live induced output</span><strong data-builder-output>0.000 V</strong><small data-builder-current>0.0 mA · Circuit open</small></div>
-              </aside>
-            </div>
-            <p class="bench-caption">A virtual practical bench with coil, bar magnet, diode, capacitor, LED, switch, ammeter and voltmeter. Build your own circuit—there is no fixed layout.</p>
+          <div class="reference-content">
+            <p><strong>Try different conditions:</strong> vary the coil turns, magnet strength and starting angle, then compare the peak EMF readings.</p>
+            <p>Use Reset between trials so each experiment starts from the same position.</p>
           </div>
         </section>
 

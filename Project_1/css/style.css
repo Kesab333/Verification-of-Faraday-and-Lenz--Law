@@ -255,6 +255,16 @@
   box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, .08);
 }
 
+/* The meter has its own reserved area, so it never covers the apparatus. */
+@media (max-width: 760px) {
+  .meter-panel {
+    position: static;
+    width: auto;
+    max-width: 22rem;
+    margin: 1rem auto;
+  }
+}
+
 .meter-label {
   margin-bottom: .5rem;
   font-size: 1.3rem;
@@ -753,6 +763,8 @@
 .graphs-card.drag-over { outline: 3px solid #089b93; }
 .workspace-reference { display: grid; place-items: center; height: 100%; padding: 1.5rem; background: #f5fbfa; }
 .workspace-reference .reference-card { width: 100%; max-width: 75rem; min-height: 100%; resize: none; box-shadow: none; }
+.workspace-reference .reference-card { border: none; }
+.workspace-reference .reference-card .reference-content, .workspace-reference .reference-card img { height: 100%; }
 .simulation-card.is-reference-mode button:disabled, .simulation-card.is-reference-mode input:disabled, .simulation-card.is-reference-mode summary { cursor: not-allowed; }
 .simulation-card.is-reference-mode:not(.is-graph-mode) .simulation-toolbar, .simulation-card.is-reference-mode:not(.is-graph-mode) .experiment-sidepanel { opacity: .62; }
 .workspace-reference .task-title { display: none; }
@@ -766,6 +778,91 @@
   background: #f5fbfa;
 }
 
+.diagram-figure { background: #f5fbfa; }
+.diagram-figure area { cursor: help; }
+
+.diagram-caption { display: none; }
+.is-active-workspace .diagram-caption { display: block; padding: 0 1.6rem 1rem; color: #536160; font-size: 1.2rem; font-style: italic; text-align: center; }
+
+/* A single viewport owns the active section.  The original nodes are moved
+   between it and this list; no section is copied or re-rendered. */
+#workspaceViewport {
+  height: 44rem;
+  min-height: 44rem;
+  overflow: auto;
+  background: #fff;
+}
+
+#workspaceViewport > .apparatus-wrap,
+#workspaceViewport > .main__task-div,
+#workspaceViewport > .side-details {
+  width: 100%;
+  min-height: 100%;
+}
+
+#workspaceViewport > .apparatus-wrap > canvas {
+  width: 100%;
+  height: 44rem;
+  min-height: 44rem;
+}
+
+#workspaceViewport > .main__task-div,
+#workspaceViewport > .side-details {
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+}
+
+#workspaceViewport > .side-details {
+  display: block;
+  overflow: visible;
+}
+
+#workspaceViewport > .side-details > summary { display: none; }
+#workspaceViewport > .main__task-div > .task-title { display: none; }
+#workspaceViewport > .graphs-card .graph-grid canvas { height: 21rem; min-height: 0; }
+
+.section-list {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5rem;
+}
+
+.section-list > .workspace-section,
+.section-list > .main__task-div,
+.section-list > .side-details {
+  min-height: 15rem;
+  max-height: 24rem;
+  overflow: auto;
+}
+
+.section-list > .workspace-section {
+  position: relative;
+  border: 1px solid #e2e8f0;
+  border-radius: .9rem;
+  background: #fff;
+}
+
+.section-list > .workspace-section > canvas {
+  height: 23rem;
+  min-height: 23rem;
+}
+
+.section-list > .side-details {
+  border: 1px solid #c8dada;
+  border-radius: .9rem;
+  background: #fff;
+}
+
+.section-list > .side-details > summary { padding: .8rem 1rem; }
+
+@media (max-width: 760px) {
+  #workspaceViewport { height: 31rem; min-height: 31rem; }
+  #workspaceViewport > .apparatus-wrap > canvas { height: 31rem; min-height: 31rem; }
+  .section-list { grid-template-columns: 1fr; }
+}
+
 .reference-content {
   padding: 1.4rem 1.6rem;
   color: #536160;
@@ -775,43 +872,6 @@
 .reference-content p+p {
   margin-top: .9rem;
 }
-
-/* Open-ended circuit practical bench */
-.experiments-card { min-width: 0; resize: none; }
-.circuit-builder { color: #263536; background: #f1f6f5; }
-.builder-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; padding: 1.15rem 1.5rem; border-bottom: 1px solid #cfe0de; background: linear-gradient(110deg, #fff 0%, #f4fbfa 100%); }
-.builder-kicker { display: block; color: #0b877f; font-size: 1.05rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-.builder-toolbar h3 { color: #254343; font-size: 1.85rem; line-height: 1.2; }
-.builder-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .55rem; }
-.builder-status { color: #617271; font-size: 1.1rem; }
-.bench-button { padding: .45rem .75rem; border: 1px solid #adcac6; border-radius: .4rem; background: #fff; color: #27756f; font-size: 1.1rem; font-weight: 800; }
-.bench-button:hover { border-color: #068d83; background: #e8f7f4; }
-.bench-button.primary { border-color: #078b81; background: #078f85; color: #fff; }
-.builder-layout { display: grid; grid-template-columns: minmax(0, 1fr) 21rem; min-height: 52rem; }
-.workbench { position: relative; isolation: isolate; overflow: hidden; min-width: 0; min-height: 52rem; background-color: #d9b27e; background-image: linear-gradient(90deg, rgba(95,55,20,.09) 1px, transparent 1px), linear-gradient(rgba(95,55,20,.08) 1px, transparent 1px), linear-gradient(135deg, rgba(255,255,255,.15), transparent 40%); background-size: 2.5rem 2.5rem, 2.5rem 2.5rem, auto; box-shadow: inset 0 0 0 1rem rgba(85, 47, 16, .14), inset 0 0 4rem rgba(74, 41, 15, .2); }
-.bench-surface-label { position: absolute; top: 1.2rem; left: 1.5rem; z-index: 4; color: rgba(69, 40, 18, .72); font-family: Georgia, serif; font-size: 1.35rem; font-weight: 700; letter-spacing: .11em; }
-.bench-surface-label span { display: block; margin-top: .15rem; color: rgba(69, 40, 18, .55); font-family: Nunito, sans-serif; font-size: .95rem; font-weight: 700; letter-spacing: .02em; }
-.wire-layer { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.wire-path { fill: none; stroke: #202827; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 2px 1px rgba(0,0,0,.25)); }
-.wire-path.outer { stroke: #151918; stroke-width: 6; }
-.wire-path.inner { stroke: #e9523c; stroke-width: 2; opacity: .8; }
-.apparatus-item { position: absolute; z-index: 3; left: var(--x); top: var(--y); width: 11rem; height: 11rem; user-select: none; touch-action: none; cursor: grab; filter: drop-shadow(0 .7rem .6rem rgba(70, 42, 17, .28)); }
-.apparatus-item.is-dragging { z-index: 5; cursor: grabbing; filter: drop-shadow(0 1.2rem 1rem rgba(48, 26, 7, .35)); }
-.apparatus-item::after { content: ''; position: absolute; inset: 1.5rem 0 0; z-index: -1; border-radius: 50%; background: rgba(78, 45, 15, .16); filter: blur(.3rem); transform: translateY(3.5rem) scaleX(.78); }
-.device-name { position: absolute; top: -1.7rem; left: 50%; width: max-content; max-width: 13rem; transform: translateX(-50%); color: #553918; font-size: .9rem; font-weight: 900; letter-spacing: .06em; text-shadow: 0 1px #f8dfb9; white-space: nowrap; }
-.terminal { position: absolute; z-index: 6; width: 1.45rem; height: 1.45rem; border: .3rem solid #6f441a; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe6a5 0 15%, #c9892c 27%, #7b4918 80%); box-shadow: 0 .15rem .2rem rgba(61,31,4,.4); cursor: crosshair; }
-.terminal:hover, .terminal.is-selected { outline: .25rem solid #fff6b6; outline-offset: .17rem; }
-.terminal.is-selected { box-shadow: 0 0 0 .45rem #078f85, 0 .15rem .2rem rgba(61,31,4,.4); }
-.terminal-top { top: .1rem; left: calc(50% - .72rem); }.terminal-bottom { bottom: .1rem; left: calc(50% - .72rem); }.terminal-left { left: -.3rem; top: calc(50% - .72rem); }.terminal-right { right: -.3rem; top: calc(50% - .72rem); }
-
-.coil-device { width: 10rem; height: 14rem; }.coil-core { position: absolute; top: 2.1rem; left: 3.75rem; width: 2.5rem; height: 9.9rem; border: .3rem solid #26322f; border-radius: .55rem; background: linear-gradient(90deg, #a4aaa3, #f0f2e9 40%, #7d8985 100%); }.coil-windings { position: absolute; top: 1.65rem; left: 1.9rem; width: 6.2rem; height: 10.7rem; overflow: hidden; }.coil-windings i { display: block; height: 1.4rem; margin: -.14rem 0; border: .45rem solid #a75412; border-right-color: #f0aa46; border-bottom-color: #713307; border-radius: 50%; background: transparent; }.coil-tag { position: absolute; right: -.9rem; bottom: 2.2rem; padding: .12rem .35rem; border-radius: .2rem; background: #f6efe2; color: #77491c; font-size: .8rem; font-weight: 800; }
-.magnet-device { width: 12rem; height: 7rem; }.magnet-body { position: absolute; top: 1.3rem; left: 1rem; display: flex; overflow: hidden; width: 10rem; height: 4.4rem; border: .35rem solid #263038; border-radius: .45rem; background: #9f2132; box-shadow: inset 0 .25rem .35rem #ffffff38, inset 0 -.35rem .4rem #530c15; }.magnet-body b { display: grid; place-items: center; width: 50%; color: white; font-family: Georgia, serif; font-size: 1.75rem; text-shadow: 0 1px 1px #4d1420; }.magnet-body b+ b { background: linear-gradient(#306d9e, #17436e); }.magnet-arrow { position: absolute; bottom: -.4rem; left: 50%; width: max-content; transform: translateX(-50%); color: #68411c; font-size: .85rem; font-weight: 800; white-space: nowrap; }
-.diode-device { width: 11rem; height: 7rem; }.diode-body { position: absolute; top: 2.15rem; left: 1.4rem; width: 8.2rem; height: 2.3rem; border: .2rem solid #1e2525; border-radius: 1.5rem; background: linear-gradient(#3b4242, #101515 55%, #404748); }.diode-body i { position: absolute; top: -.2rem; right: 1.2rem; width: .6rem; height: 2.3rem; background: #dfd7c4; box-shadow: 0 0 .15rem #fff; }.band-mark { position: absolute; top: 2rem; right: 2.45rem; width: .45rem; height: 2.7rem; background: #e7e0cf; }
-.capacitor-device { width: 12rem; height: 8rem; }.capacitor-can { position: absolute; top: 1.25rem; left: 3.65rem; width: 4.7rem; height: 5.6rem; border: .25rem solid #152d4b; border-radius: .5rem .5rem .8rem .8rem; background: linear-gradient(90deg, #113c6a, #3677a6 30%, #143b66 72%, #092744); box-shadow: inset .35rem 0 #ffffff3d, inset -.35rem 0 #00000038; }.capacitor-can b { position: absolute; top: .3rem; left: .55rem; color: white; font-size: 1.25rem; }.capacitor-can i { position: absolute; bottom: 1.55rem; left: .6rem; width: 3.2rem; border-top: .18rem solid #d4e5ed; }.capacitor-can i + i { bottom: 1.13rem; }.capacitor-can em { position: absolute; bottom: .2rem; left: .25rem; color: #e3f2f2; font-size: .7rem; font-style: normal; white-space: nowrap; }
-.switch-device { width: 12rem; height: 7rem; }.switch-lever { position: absolute; top: 1.95rem; left: 1.2rem; width: 9.6rem; height: 3.5rem; border: .25rem solid #673f1b; border-radius: .45rem; background: linear-gradient(#d6a863, #9f682c); }.switch-lever::before, .switch-lever::after { content: ''; position: absolute; bottom: .85rem; width: 1rem; height: 1rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe4a0, #7e4815 72%); }.switch-lever::before { left: 1.1rem; }.switch-lever::after { right: 1.1rem; }.switch-lever i { position: absolute; bottom: 1.35rem; left: 1.6rem; width: 5.4rem; height: .45rem; border-radius: .2rem; background: linear-gradient(#d5e4e2, #5f716f); transform: rotate(-28deg); transform-origin: left center; transition: transform .22s; }.switch-device.is-closed .switch-lever i { transform: rotate(0deg); width: 6.2rem; }.switch-state { position: absolute; top: 5.55rem; left: 0; width: 100%; color: #6e4218; font-size: .8rem; font-weight: 900; text-align: center; }
-.meter-device { width: 13rem; height: 10rem; }.analog-meter { position: absolute; top: 1rem; left: 1.2rem; width: 10.4rem; height: 8.2rem; overflow: hidden; border: .45rem solid #1e2624; border-radius: 5.2rem 5.2rem 1rem 1rem; background: radial-gradient(ellipse at 50% 70%, #fffdf4 0 40%, #e2dfd0 70%); }.analog-meter::before { content: '−  0  10  20  30  +'; position: absolute; top: 1.8rem; left: 1.05rem; color: #303a35; font-family: monospace; font-size: .7rem; letter-spacing: .04rem; transform: rotate(-7deg); }.meter-scale { position: absolute; bottom: 1.35rem; left: 0; width: 100%; color: #323b36; font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; text-align: center; }.needle { position: absolute; bottom: 1.78rem; left: 5.1rem; width: .2rem; height: 3.6rem; border-radius: 100%; background: #bf2431; transform: rotate(-45deg); transform-origin: bottom; transition: transform .18s; }.meter-reading { position: absolute; bottom: .25rem; left: 0; width: 100%; color: #33443e; font-family: monospace; font-size: .85rem; text-align: center; }.digital-meter { position: absolute; top: 2rem; left: 1.1rem; display: flex; align-items: center; gap: .35rem; width: 10.6rem; padding: .75rem .6rem; border: .4rem solid #27302d; border-radius: .45rem; background: linear-gradient(#2c3331, #111817); box-shadow: inset 0 0 .45rem #000; color: #b9f685; font-family: monospace; }.digital-meter span { color: #ccd9cf; font-size: 1rem; }.digital-meter b { flex: 1; text-align: right; font-size: 1.4rem; }.digital-meter i { width: .55rem; height: .55rem; border-radius: 50%; background: #493a32; }.digital-meter i.is-lit { background: #f4b942; box-shadow: 0 0 .7rem #f4b942; }
-.led-device { width: 10rem; height: 8rem; }.led-lens { position: absolute; top: 1.3rem; left: 2.55rem; width: 4.9rem; height: 4.9rem; border: .35rem solid #74251e; border-radius: 50% 50% 43% 43%; background: radial-gradient(circle at 35% 28%, #ffb44f 0 5%, #e33b28 30%, #731918 77%); box-shadow: inset .3rem .2rem .6rem #ffffff5c, inset -.5rem -.5rem .9rem #3e0909; }.led-lens i { position: absolute; inset: 1rem; border: .15rem solid #ffdf83; border-radius: 50%; opacity: .7; }.led-pins { position: absolute; top: 6rem; left: 3.3rem; width: 3.4rem; height: 1.3rem; border-left: .25rem solid #777; border-right: .25rem solid #777; }.led-device.is-lit .led-lens { background: radial-gradient(circle at 45% 42%, #fff8bd 0 14%, #ffd03a 30%, #f45122 60%, #731918 100%); box-shadow: 0 0 1.3rem .4rem #ffb33b, inset .3rem .2rem .6rem #fff; }
-.bench-controls { padding: 1.25rem 1rem; border-left: 1px solid #c4d7d4; background: #fafffe; }.control-heading { padding-bottom: .85rem; border-bottom: 1px solid #dbe9e6; color: #0b827a; font-size: 1.35rem; font-weight: 900; }.control-heading small { display: block; color: #637271; font-size: .95rem; font-weight: 600; }.bench-control { display: block; margin-top: 1.05rem; color: #4b5d5b; font-size: 1.05rem; }.bench-control span { display: flex; justify-content: space-between; gap: .4rem; }.bench-control output { color: #087d76; font-weight: 900; white-space: nowrap; }.bench-control input { width: 100%; margin-top: .25rem; accent-color: #078f85; }.connection-guide { margin-top: 1.25rem; padding: .75rem; border-radius: .4rem; background: #eef7f5; color: #59706c; font-size: .95rem; line-height: 1.35; }.connection-guide b { color: #087d76; }.connection-guide p { margin-top: .35rem; }.bench-readout { margin-top: 1.1rem; padding: .75rem; border: 1px solid #bad5d0; border-radius: .45rem; background: #fff; }.bench-readout span, .bench-readout small { display: block; color: #657572; font-size: .9rem; }.bench-readout strong { display: block; margin: .25rem 0; color: #087d76; font-family: monospace; font-size: 1.6rem; }.bench-caption { padding: .8rem 1.5rem; border-top: 1px solid #cfe0de; background: #fff; color: #647371; font-size: 1.1rem; }
 
 .formula-content {
   color: #087d76;
@@ -847,6 +907,34 @@
   font-size: 1.15rem;
   pointer-events: none;
   white-space: nowrap;
+}
+
+/* When a reference view (diagram/formula/etc.) is shown in the main workspace,
+   dock the simulation card to the bottom and hide captions/hints. */
+.simulation-card.is-reference-mode {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  min-height: 0;
+}
+.simulation-card.is-reference-mode .apparatus-caption,
+.simulation-card.is-reference-mode .drag-hint {
+  display: none !important;
+}
+
+.simulation-card.is-reference-mode .simulation-toolbar,
+.simulation-card.is-reference-mode .experiment-sidepanel { opacity: 1; }
+
+/* Make the reference content occupy the same space as the simulation viewport */
+.workspace-reference {
+  padding: 0;
+  background: transparent;
+}
+.workspace-reference .reference-card {
+  width: 100%;
+  max-width: none;
+  min-height: 44rem;
+  padding: 0;
+  background: #ffffff;
 }
 
 .heat-readout {
@@ -953,21 +1041,4 @@
   .tool-menu {
     gap: 1rem;
   }
-
-  .builder-toolbar { align-items: flex-start; flex-direction: column; }
-  .builder-actions { justify-content: flex-start; }
-  .builder-layout { grid-template-columns: 1fr; }
-  .workbench { min-height: 47rem; }
-  .bench-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1.1rem; border-top: 1px solid #c4d7d4; border-left: 0; }
-  .control-heading, .connection-guide, .bench-readout { grid-column: 1/-1; }
-  .bench-control { margin-top: 0; }
-}
-
-@media (max-width:480px) {
-  .workbench { min-height: 42rem; }
-  .apparatus-item { transform: scale(.78); transform-origin: top left; }
-  .bench-controls { grid-template-columns: 1fr; }
-  .bench-control, .control-heading, .connection-guide, .bench-readout { grid-column: auto; }
-  .connection-guide, .bench-readout { grid-column: 1; }
-  .builder-status { width: 100%; }
 }

@@ -10,7 +10,9 @@ function resizeCanvas(canvas, context) { const rect = canvas.getBoundingClientRe
 function line(context, points, color, width = 2) { context.beginPath(); points.forEach(([x, y], index) => index ? context.lineTo(x, y) : context.moveTo(x, y)); context.strokeStyle = color; context.lineWidth = width; context.stroke(); }
 function arrow(context, x1, y1, x2, y2, color) { line(context, [[x1, y1], [x2, y2]], color, 2); const angle = Math.atan2(y2 - y1, x2 - x1); context.beginPath(); context.moveTo(x2, y2); context.lineTo(x2 - 8 * Math.cos(angle - .45), y2 - 8 * Math.sin(angle - .45)); context.lineTo(x2 - 8 * Math.cos(angle + .45), y2 - 8 * Math.sin(angle + .45)); context.closePath(); context.fillStyle = color; context.fill(); }
 function drawApparatus(state) {
-  const { width, height } = resizeCanvas(apparatus, apparatusContext); const c = apparatusContext; c.clearRect(0, 0, width, height); const scale = Math.min(width / 620, height / 370); const ox = (width - 620 * scale) / 2, oy = (height - 370 * scale) / 2; c.save(); c.translate(ox, oy); c.scale(scale, scale);
+  const { width, height } = resizeCanvas(apparatus, apparatusContext); const c = apparatusContext; c.clearRect(0, 0, width, height);
+  const meterPanel = $('.meter-panel'); const meterSpace = window.matchMedia('(min-width: 761px)').matches && meterPanel ? meterPanel.offsetWidth + 32 : 0;
+  const drawingWidth = Math.max(280, width - meterSpace); const scale = Math.min(drawingWidth / 620, height / 370); const ox = (drawingWidth - 620 * scale) / 2, oy = (height - 370 * scale) / 2; c.save(); c.translate(ox, oy); c.scale(scale, scale);
   c.fillStyle = '#ffffff'; c.fillRect(0, 0, 620, 370); c.strokeStyle = '#e2e8f0'; c.lineWidth = 1; for (let x = 30; x < 620; x += 40) line(c, [[x, 315], [x + 18, 315]], '#f1f5f9', 1);
   c.fillStyle = '#697372'; c.fillRect(80, 287, 235, 12); c.fillStyle = '#879190'; c.fillRect(95, 300, 205, 8); c.fillStyle = '#596160'; c.fillRect(166, 88, 11, 200); c.fillStyle = '#737c7b'; c.fillRect(146, 75, 50, 12); c.beginPath(); c.arc(171.5, 93, 12, 0, Math.PI * 2); c.fillStyle = '#3d4746'; c.fill(); c.beginPath(); c.arc(171.5, 93, 5, 0, Math.PI * 2); c.fillStyle = '#d9dedc'; c.fill();
   const arm = 180, pivot = { x: 171.5, y: 93 }; const direction = Math.PI / 2 + state.theta; const magnet = { x: pivot.x + arm * Math.cos(direction), y: pivot.y + arm * Math.sin(direction) }; c.beginPath(); c.arc(pivot.x, pivot.y, arm, Math.PI / 2 - .98, Math.PI / 2 + .98); c.strokeStyle = '#6d7775'; c.lineWidth = 8; c.stroke(); c.beginPath(); c.arc(pivot.x, pivot.y, arm, Math.PI / 2 - .98, Math.PI / 2 + .98); c.strokeStyle = '#aeb6b4'; c.lineWidth = 3; c.stroke(); line(c, [[pivot.x, pivot.y], [magnet.x, magnet.y]], '#4f5957', 6);
@@ -18,7 +20,7 @@ function drawApparatus(state) {
   const coilX = 435, coilY = 266; c.fillStyle = '#565f5e'; c.fillRect(403, 286, 65, 8); c.fillRect(416, 212, 9, 77); for (let i = 0; i < 8; i++) { c.beginPath(); c.ellipse(coilX, 251, 28 - i * .3, 43 - i * .3, 0, 0, Math.PI * 2); c.strokeStyle = '#bd7025'; c.lineWidth = 3; c.stroke(); } c.fillStyle = '#586260'; c.fillRect(427, 200, 16, 12); c.fillStyle = '#697372'; c.fillRect(429, 194, 12, 8);
   const emfMagnitude = Math.min(Math.abs(state.emf) * 18, 1); c.globalAlpha = .18 + .55 * emfMagnitude; for (let i = 0; i < 3; i++) { c.beginPath(); c.ellipse(coilX, 251, 42 + i * 13, 57 + i * 16, 0, 0, Math.PI * 2); c.strokeStyle = '#db8b22'; c.lineWidth = 1; c.stroke(); } c.globalAlpha = 1;
   const polarity = state.emf >= 0 ? 1 : -1; arrow(c, 465, 218, 510, 155, polarity > 0 ? '#168983' : '#b54747'); arrow(c, 468, 280, 520, 215, polarity > 0 ? '#168983' : '#b54747'); line(c, [[465, 217], [495, 130], [525, 25]], '#3b5554', 2); line(c, [[469, 280], [515, 170], [555, 25]], '#3b5554', 2); c.beginPath(); c.arc(525, 25, 4, 0, Math.PI * 2); c.fillStyle = '#b34747'; c.fill(); c.beginPath(); c.arc(555, 25, 4, 0, Math.PI * 2); c.fillStyle = '#315788'; c.fill();
-  c.fillStyle = '#556160'; c.font = '600 11px Nunito'; c.fillText('Copper coil', 407, 346); c.fillText('Semicircular frame', 89, 50); c.restore();
+  c.fillStyle = '#556160'; c.font = '600 11px Nunito'; c.fillText('Copper coil', 407, 346); c.textAlign = 'center'; c.fillText('Semicircular frame', 171.5, 50); c.textAlign = 'left'; c.restore();
 }
 function drawGraph(canvas, color, data, accessor, min, max) { const c = canvas.getContext('2d'); const { width, height } = resizeCanvas(canvas, c); c.clearRect(0, 0, width, height); const pad = { left: 35, right: 10, top: 12, bottom: 27 }; const pw = width - pad.left - pad.right, ph = height - pad.top - pad.bottom; c.font = '11px Nunito'; c.strokeStyle = '#d8e3e3'; c.lineWidth = 1; for (let i = 0; i < 5; i++) { const y = pad.top + i * ph / 4; line(c, [[pad.left, y], [width - pad.right, y]], '#e2ebeb', 1); } line(c, [[pad.left, pad.top], [pad.left, height - pad.bottom], [width - pad.right, height - pad.bottom]], '#607170', 1); c.fillStyle = '#627070'; c.fillText(max.toFixed(2), 2, pad.top + 4); c.fillText(min.toFixed(2), 2, height - pad.bottom + 4); c.fillText('time →', width / 2 - 17, height - 7); if (data.length < 2) return; const t0 = data[0].time, t1 = data[data.length - 1].time || 1; c.beginPath(); data.forEach((point, index) => { const x = pad.left + (point.time - t0) / (t1 - t0) * pw; const value = Math.max(min, Math.min(max, accessor(point))); const y = pad.top + (max - value) / (max - min) * ph; index ? c.lineTo(x, y) : c.moveTo(x, y); }); c.strokeStyle = color; c.lineWidth = 2; c.stroke(); }
 function observation(state) { if (state.complete) return 'Experiment complete. Mechanical energy was converted to electrical energy and dissipated as heat in the coil; Lenz’s law damped the motion.'; if (!state.running) return state.time > 0 ? 'Paused. Resume to continue observing the induced EMF.' : hasDragged ? 'Frame displaced. Release it gently to start free oscillation.' : 'Drag the semicircular frame to one side, then release it to begin the experiment.'; if (Math.abs(state.emf) < .002) return 'At the turning point the magnet is momentarily slow, so the induced EMF is nearly zero.'; return state.emf > 0 ? 'Magnet is moving toward the coil: flux increases and a positive EMF is generated.' : 'Magnet is moving away from the coil: flux decreases and the EMF reverses.'; }
@@ -27,10 +29,36 @@ function release() { model.release(); sync(model.state); } function toggle() { m
 function dragFrame(event) { if (!isDragging || model.running) return; const rect = apparatus.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width * 620; const y = (event.clientY - rect.top) / rect.height * 370; const pivot = { x: 171.5, y: 93 }; let angle = Math.atan2(y - pivot.y, x - pivot.x) - Math.PI / 2; angle = Math.max(-55 * Math.PI / 180, Math.min(55 * Math.PI / 180, angle)); const magnitude = Math.round(Math.abs(angle * 180 / Math.PI)); $('#angleControl').value = magnitude; $('#angleOutput').textContent = `${magnitude}°`; model.setParameter('angle', magnitude); model.theta = angle; model.omega = 0; model.updateElectromagnetism(); hasDragged = true; sync(model.state); }
 apparatus.addEventListener('pointerdown', (event) => { if (model.running) return; isDragging = true; apparatus.setPointerCapture(event.pointerId); dragFrame(event); }); apparatus.addEventListener('pointermove', dragFrame); apparatus.addEventListener('pointerup', () => { isDragging = false; }); apparatus.addEventListener('pointercancel', () => { isDragging = false; });
 elements.release.addEventListener('click', release); elements.pause.addEventListener('click', toggle); elements.reset.addEventListener('click', () => { hasDragged = false; reset(); });
-const workspaceViewport = $('#workspaceViewport'), workspaceTitle = $('#workspaceTitle'), simulationCard = $('#simulation'), controlsLockButton = $('#controlsLockButton'); const simulationNodes = [...workspaceViewport.childNodes]; let workspaceMode = 'simulation', controlsLocked = false;
-function refreshControlState() { const canUseVariables = workspaceMode === 'simulation' || workspaceMode === 'graphs'; const canUseToolbar = workspaceMode === 'simulation'; controls.forEach(control => { control.input.disabled = !canUseVariables || (controlsLocked && model.running); }); controlsLockButton.disabled = !canUseVariables; elements.release.disabled = !canUseToolbar || model.running; elements.pause.disabled = !canUseToolbar; elements.reset.disabled = !canUseToolbar; $('#helpButton').disabled = !canUseToolbar; }
+const workspaceViewport = $('#workspaceViewport'), workspaceTitle = $('#workspaceTitle'), simulationCard = $('#simulation'), controlsLockButton = $('#controlsLockButton');
+const sectionList = document.createElement('div'); sectionList.id = 'sectionList'; sectionList.className = 'section-list';
+const mainSection = document.querySelector('.main-section'); const footer = mainSection.querySelector('.footer'); mainSection.insertBefore(sectionList, footer);
+const simulationWindow = $('#simulationWindow');
+const sectionNames = { simulation: 'Simulation', diagram: 'Diagram', formula: 'Formula', calculation: 'Calculation', graphs: 'Live Graphs', results: 'Results', observation: 'Observation', experiments: 'Experiments' };
+const workspaceSections = {
+  simulation: simulationWindow, diagram: $('#diagram'), formula: $('#formula'), calculation: $('#calculation'), graphs: $('#graphs'), results: $('#observations'), observation: $('#observation'), experiments: $('#experiments')
+};
+Object.entries(workspaceSections).forEach(([name, section]) => { if (!section || name === 'simulation') return; sectionList.append(section); });
+simulationWindow.classList.add('workspace-section', 'simulation-window');
+simulationWindow.classList.add('is-active-workspace');
+let workspaceMode = 'simulation', controlsLocked = false;
+function refreshControlState() { const canUseVariables = true; const canUseToolbar = true; controls.forEach(control => { control.input.disabled = !canUseVariables || (controlsLocked && model.running); }); controlsLockButton.disabled = !canUseVariables; elements.release.disabled = !canUseToolbar || model.running; elements.pause.disabled = !canUseToolbar; elements.reset.disabled = !canUseToolbar; $('#helpButton').disabled = !canUseToolbar; }
 controlsLockButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); controlsLocked = !controlsLocked; controlsLockButton.classList.toggle('is-locked', controlsLocked); controlsLockButton.setAttribute('aria-pressed', String(controlsLocked)); controlsLockButton.textContent = controlsLocked ? '🔒 Locked' : '🔓 Lock'; refreshControlState(); });
-function selectWorkspace(name) { const source = name === 'results' ? $('#observations') : $(`#${name}`); if (!source && name !== 'simulation') return; workspaceMode = name; document.querySelectorAll('.workspace-link').forEach(link => link.classList.toggle('is-active', link.dataset.workspace === name)); workspaceViewport.replaceChildren(); if (name === 'simulation') { workspaceTitle.textContent = 'Simulation'; workspaceViewport.append(...simulationNodes); simulationCard.classList.remove('is-reference-mode', 'is-graph-mode'); refreshControlState(); sync(model.state); return; } const copy = source.cloneNode(true); copy.removeAttribute('id'); copy.classList.remove('is-hidden'); copy.querySelectorAll('.task-title').forEach(title => title.remove()); copy.querySelectorAll('details').forEach(section => { section.open = true; }); copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id')); const view = document.createElement('div'); view.className = 'workspace-reference'; view.append(copy); workspaceViewport.append(view); workspaceTitle.textContent = name === 'results' ? 'Results' : source.querySelector('.task-title').textContent; simulationCard.classList.add('is-reference-mode'); simulationCard.classList.toggle('is-graph-mode', name === 'graphs'); refreshControlState(); if (name === 'graphs') { const canvases = view.querySelectorAll('canvas'); drawGraph(canvases[0], '#168983', model.state.history, point => point.emf, -.18, .18); drawGraph(canvases[1], '#b36d24', model.state.history, point => point.angle, -60, 60); } if (name === 'experiments') view.querySelectorAll('[data-circuit-builder]').forEach(renderBench); }
+function selectWorkspace(name) {
+  const nextSection = workspaceSections[name]; if (!nextSection || name === workspaceMode) return;
+  const currentSection = workspaceSections[workspaceMode];
+  currentSection.classList.remove('is-active-workspace');
+  sectionList.append(currentSection);
+  if (nextSection.tagName === 'DETAILS') nextSection.open = true;
+  workspaceViewport.append(nextSection);
+  nextSection.classList.add('is-active-workspace');
+  workspaceMode = name;
+  document.querySelectorAll('.workspace-link').forEach(link => link.classList.toggle('is-active', link.dataset.workspace === name));
+  workspaceTitle.textContent = sectionNames[name];
+  simulationCard.classList.toggle('is-reference-mode', name !== 'simulation');
+  simulationCard.classList.toggle('is-graph-mode', name === 'graphs');
+  refreshControlState();
+  sync(model.state);
+}
 document.querySelectorAll('.workspace-link').forEach(link => link.addEventListener('click', () => selectWorkspace(link.dataset.workspace)));
 function syncWorkspaceGraphs() { if (workspaceMode !== 'graphs') return; const canvases = workspaceViewport.querySelectorAll('canvas'); if (canvases.length === 2) { drawGraph(canvases[0], '#168983', model.state.history, point => point.emf, -.18, .18); drawGraph(canvases[1], '#b36d24', model.state.history, point => point.angle, -60, 60); } }
 const fullscreenButton = $('#fullscreenButton');
@@ -54,74 +82,4 @@ $('#helpButton').addEventListener('click', () => { if (workspaceMode !== 'simula
 
 let draggedCard = null; document.querySelectorAll('.reference-card, .graphs-card').forEach(card => { card.setAttribute('draggable', 'true'); card.addEventListener('dragstart', event => { draggedCard = card; card.classList.add('is-dragging'); event.dataTransfer.effectAllowed = 'move'; }); card.addEventListener('dragend', () => { card.classList.remove('is-dragging'); document.querySelectorAll('.drag-over').forEach(item => item.classList.remove('drag-over')); draggedCard = null; }); card.addEventListener('dragover', event => { if (!draggedCard || draggedCard === card) return; event.preventDefault(); card.classList.add('drag-over'); }); card.addEventListener('dragleave', () => card.classList.remove('drag-over')); card.addEventListener('drop', event => { event.preventDefault(); if (!draggedCard || draggedCard === card) return; card.parentNode.insertBefore(draggedCard, card); }); });
 const sidebar = document.querySelector('.sidebar'); if (sidebar) { sidebar.addEventListener('wheel', (event) => { if (sidebar.scrollHeight <= sidebar.clientHeight) return; const nextTop = sidebar.scrollTop + event.deltaY; const maxTop = sidebar.scrollHeight - sidebar.clientHeight; if (nextTop > 0 && nextTop < maxTop) { event.preventDefault(); sidebar.scrollTop = nextTop; } }, { passive: false }); } window.addEventListener('resize', () => sync(model.state));
-
-/* The practical bench intentionally uses DOM apparatus instead of a fixed diagram.
-   It is event-delegated so the Experiment workspace remains interactive when it is opened. */
-const circuitBenches = new Set(); const circuitStates = new WeakMap(); let benchDrag = null;
-function circuitState(shell) { if (!circuitStates.has(shell)) circuitStates.set(shell, { wires: [], selected: null, motion: 0, lastMove: 0 }); circuitBenches.add(shell); return circuitStates.get(shell); }
-function terminalFor(shell, name) { return shell.querySelector(`[data-terminal="${name}"]`); }
-function wirePoint(workbench, terminal) { const box = workbench.getBoundingClientRect(), point = terminal.getBoundingClientRect(); return { x: point.left - box.left + point.width / 2, y: point.top - box.top + point.height / 2 }; }
-function isCircuitComplete(shell, state) {
-  const joined = name => state.wires.some(wire => wire.includes(name));
-  return state.wires.length >= 6 && joined('coil-positive') && joined('coil-negative') && joined('switch-a') && joined('switch-b') && joined('ammeter-positive') && joined('ammeter-negative') && joined('voltmeter-positive') && joined('voltmeter-negative');
-}
-function benchParameters(shell) { return Object.fromEntries([...shell.querySelectorAll('[data-bench-control]')].map(input => [input.dataset.benchControl, Number(input.value)])); }
-function renderWires(shell) {
-  const state = circuitState(shell), bench = shell.querySelector('[data-workbench]'), layer = shell.querySelector('[data-wire-layer]'); if (!bench || !layer) return;
-  const rect = bench.getBoundingClientRect(); layer.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
-  layer.innerHTML = state.wires.map(([a, b]) => { const first = terminalFor(shell, a), second = terminalFor(shell, b); if (!first || !second) return ''; const p1 = wirePoint(bench, first), p2 = wirePoint(bench, second); const bend = Math.max(28, Math.abs(p2.x - p1.x) * .28); const direction = p2.x >= p1.x ? 1 : -1; const d = `M ${p1.x} ${p1.y} C ${p1.x + bend * direction} ${p1.y}, ${p2.x - bend * direction} ${p2.y}, ${p2.x} ${p2.y}`; return `<path class="wire-path outer" d="${d}"></path><path class="wire-path inner" d="${d}"></path>`; }).join('');
-}
-function renderBench(shell) {
-  const state = circuitState(shell), closed = shell.querySelector('.switch-device')?.classList.contains('is-closed'), complete = isCircuitComplete(shell, state), params = benchParameters(shell); let voltage = 0;
-  if (complete && closed) voltage = Math.min(1.8, state.motion * (params.strength || 1) * (params.turns || 250) / 250 * (params.speed || 2) * .48);
-  const current = voltage * (complete && closed ? 18 : 0), status = shell.querySelector('[data-builder-status]');
-  if (status) status.textContent = state.selected ? 'Choose a second brass terminal to make the wire.' : !state.wires.length ? 'Place parts and join their terminals.' : !complete ? `${state.wires.length} wire${state.wires.length === 1 ? '' : 's'} connected — complete the loop.` : !closed ? 'Circuit wired — close the knife switch.' : voltage > .015 ? 'Induction detected — meter responding.' : 'Circuit ready — move the magnet through the coil.';
-  shell.querySelectorAll('[data-voltmeter-reading]').forEach(reading => reading.textContent = voltage.toFixed(3));
-  shell.querySelectorAll('[data-ammeter-reading]').forEach(reading => reading.textContent = current.toFixed(1));
-  shell.querySelectorAll('[data-builder-output]').forEach(reading => reading.textContent = `${voltage.toFixed(3)} V`);
-  shell.querySelectorAll('[data-builder-current]').forEach(reading => reading.textContent = `${current.toFixed(1)} mA · ${closed ? (complete ? 'Circuit active' : 'Incomplete circuit') : 'Circuit open'}`);
-  shell.querySelectorAll('.coil-tag').forEach(tag => tag.textContent = `${params.turns || 250} turns`);
-  shell.querySelectorAll('.capacitor-can em').forEach(label => label.textContent = `${params.capacitance || 470} µF`);
-  shell.querySelectorAll('.needle').forEach(needle => needle.style.transform = `rotate(${-45 + Math.min(current, 35) * 2.3}deg)`);
-  shell.querySelectorAll('.led-device').forEach(led => led.classList.toggle('is-lit', voltage > .08));
-  shell.querySelectorAll('.digital-meter i').forEach(light => light.classList.toggle('is-lit', voltage > .01));
-  shell.querySelectorAll('.switch-state').forEach(label => label.textContent = closed ? 'CLOSED' : 'OPEN');
-  renderWires(shell);
-}
-function clearBench(shell, resetPositions = false) {
-  const state = circuitState(shell); state.wires = []; state.selected = null; state.motion = 0;
-  shell.querySelectorAll('.terminal').forEach(terminal => terminal.classList.remove('is-selected'));
-  if (resetPositions) shell.querySelectorAll('.apparatus-item').forEach(item => { item.style.left = ''; item.style.top = ''; item.classList.remove('is-dragging'); });
-  shell.querySelector('.switch-device')?.classList.remove('is-closed'); renderBench(shell);
-}
-function connectTerminals(shell, terminal) {
-  const state = circuitState(shell), name = terminal.dataset.terminal;
-  if (!state.selected) { state.selected = name; terminal.classList.add('is-selected'); renderBench(shell); return; }
-  if (state.selected === name) { state.selected = null; terminal.classList.remove('is-selected'); renderBench(shell); return; }
-  const duplicate = state.wires.some(wire => wire.includes(state.selected) && wire.includes(name));
-  if (!duplicate) state.wires.push([state.selected, name]);
-  terminalFor(shell, state.selected)?.classList.remove('is-selected'); state.selected = null; renderBench(shell);
-}
-function updateBenchControl(shell, input) { const output = shell.querySelector(`[data-control-output="${input.dataset.benchControl}"]`); if (output) { const value = Number(input.value); output.textContent = input.dataset.benchControl === 'strength' ? `${value.toFixed(1)} T` : input.dataset.benchControl === 'speed' ? ['Slow', 'Medium', 'Fast'][value - 1] : input.dataset.benchControl === 'capacitance' ? `${value} µF` : value; } renderBench(shell); }
-document.addEventListener('click', event => {
-  const shell = event.target.closest('[data-circuit-builder]'); if (!shell) return;
-  const terminal = event.target.closest('.terminal'); if (terminal) { event.preventDefault(); event.stopPropagation(); connectTerminals(shell, terminal); return; }
-  if (event.target.closest('[data-clear-wires]')) { clearBench(shell); return; }
-  if (event.target.closest('[data-reset-bench]')) { clearBench(shell, true); return; }
-  if (event.target.closest('[data-switch]')) { shell.querySelector('.switch-device')?.classList.toggle('is-closed'); renderBench(shell); }
-});
-document.addEventListener('input', event => { const input = event.target.closest('[data-bench-control]'), shell = input?.closest('[data-circuit-builder]'); if (shell) updateBenchControl(shell, input); });
-document.addEventListener('pointerdown', event => {
-  const item = event.target.closest('.apparatus-item'), shell = item?.closest('[data-circuit-builder]'); if (!item || !shell || event.target.closest('.terminal, button')) return;
-  const bench = shell.querySelector('[data-workbench]'), bounds = bench.getBoundingClientRect(), itemBounds = item.getBoundingClientRect(); benchDrag = { shell, item, bench, offsetX: event.clientX - itemBounds.left, offsetY: event.clientY - itemBounds.top, previousX: event.clientX, previousY: event.clientY, previousTime: performance.now() }; item.classList.add('is-dragging'); item.setPointerCapture?.(event.pointerId); event.preventDefault();
-});
-document.addEventListener('pointermove', event => {
-  if (!benchDrag) return; const { shell, item, bench } = benchDrag, bounds = bench.getBoundingClientRect(); let x = event.clientX - bounds.left - benchDrag.offsetX, y = event.clientY - bounds.top - benchDrag.offsetY; x = Math.max(0, Math.min(bounds.width - item.offsetWidth, x)); y = Math.max(0, Math.min(bounds.height - item.offsetHeight, y)); item.style.left = `${x}px`; item.style.top = `${y}px`;
-  if (item.dataset.device === 'magnet') { const now = performance.now(), distance = Math.hypot(event.clientX - benchDrag.previousX, event.clientY - benchDrag.previousY); circuitState(shell).motion = Math.min(2.4, distance / Math.max(1, now - benchDrag.previousTime) * 14); benchDrag.previousX = event.clientX; benchDrag.previousY = event.clientY; benchDrag.previousTime = now; }
-  renderBench(shell);
-});
-document.addEventListener('pointerup', () => { if (!benchDrag) return; benchDrag.item.classList.remove('is-dragging'); benchDrag = null; });
-window.addEventListener('resize', () => circuitBenches.forEach(renderBench));
-document.querySelectorAll('[data-circuit-builder]').forEach(renderBench);
-
-let last = performance.now(); function animate(now) { const elapsed = Math.min((now - last) / 1000, .05); model.update(elapsed); last = now; circuitBenches.forEach(shell => { const state = circuitState(shell); if (state.motion > .001) { state.motion *= Math.pow(.12, elapsed); renderBench(shell); } }); sync(model.state); refreshControlState(); syncWorkspaceGraphs(); requestAnimationFrame(animate); } sync(model.state); refreshControlState(); requestAnimationFrame(animate);
+let last = performance.now(); function animate(now) { model.update((now - last) / 1000); last = now; sync(model.state); refreshControlState(); syncWorkspaceGraphs(); requestAnimationFrame(animate); } sync(model.state); refreshControlState(); requestAnimationFrame(animate);
