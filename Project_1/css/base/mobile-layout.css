@@ -1,0 +1,350 @@
+/* ==========================================
+   UPDATED MOBILE & TABLET RESPONSIVE LAYOUT (<= 768px)
+   ========================================== */
+
+@media screen and (max-width: 768px) {
+
+  /* ---- 1. Universal Box & Page Reset ---- */
+  *, *::before, *::after {
+    box-sizing: border-box !important;
+  }
+
+  body, html {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .container {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0.35rem !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  /* ---- 2. Redesigned Premium Header ---- */
+  .title-div-container {
+    padding: 0.25rem 0.25rem 0.1rem !important;
+    background: transparent !important;
+  }
+
+  .title-div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.8rem !important;
+    padding: 0.65rem 1rem !important;
+    min-height: auto !important;
+    border-radius: 0.8rem !important;
+    background: linear-gradient(135deg, #0e6b65 0%, #054a46 100%) !important;
+    box-shadow: 0 4px 14px rgba(5, 74, 70, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  }
+
+  .logo-div {
+    flex: 0 0 2.5rem !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50% !important;
+    padding: 0.25rem !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  .logo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
+  }
+
+  .title-div h1 {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    margin: 0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* ---- 3. Centered Top Navigation Icon Rail ---- */
+  .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 0.4rem 0.5rem !important;
+    background: #ffffff !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .tool-menu {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    max-width: max-content !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .tool-list {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .tool-list span:last-child {
+    display: none !important;
+  }
+
+  .tool-link,
+  .rail-button {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  .tool-link::before,
+  .rail-button::before {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+
+  /* ---- 4. Single-Column Workspace Container ---- */
+  .main,
+  .main-section,
+  .main__task-div,
+  .simulation-card {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .lab-stage {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+  }
+
+  /* ---- 5. 3D Simulation Canvas & Workspace Viewport ---- */
+  .workspace-viewport,
+  #workspaceViewport,
+  .workspace-section {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .three-viewport,
+  .apparatus-wrap,
+  .simulation-window.is-active-workspace {
+    width: 100% !important;
+    height: 55vh !important;
+    min-height: 280px !important;
+    max-height: 500px !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .three-viewport canvas,
+  .apparatus-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+
+  /* Fullscreen Overrides */
+  .apparatus-wrap:fullscreen,
+  #simulationWindow:fullscreen,
+  #workspaceViewport:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    min-height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #f8fafc !important;
+    display: block !important;
+  }
+
+  .apparatus-wrap:fullscreen .three-viewport,
+  #simulationWindow:fullscreen #threeViewport {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    min-height: 100vh !important;
+  }
+
+  /* ---- 6. Centered Simulation Action Buttons & Status ---- */
+  .simulation-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem 0.5rem !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .status-chip {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #4b5563 !important;
+  }
+
+  .button-group,
+  .control-buttons-row,
+  .sim-action-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .control-button,
+  .sim-action-bar button,
+  .action-btn {
+    flex: 0 1 auto !important;
+    min-width: 5.5rem !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* ---- 7. Right Control Panel (Directly Below Canvas) ---- */
+  .experiment-sidepanel,
+  .side-details {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem 0.8rem !important;
+    border-left: none !important;
+    border-top: 1px solid #d2e1e0 !important;
+    background: #ffffff !important;
+  }
+
+  .control-presets,
+  .mode-controls,
+  .display-controls,
+  .variables-sections {
+    display: block !important;
+    width: 100% !important;
+    padding: 0.6rem 0 !important;
+  }
+
+  .meter-panel {
+    display: none !important;
+  }
+
+  .preset-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .mode-button-group {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.4rem !important;
+  }
+
+  .variables-sections .var-div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.2rem !important;
+  }
+
+  /* ---- 8. Reference Sections & Select Elements Fix ---- */
+  .formula-display-grid,
+  .graph-grid,
+  .reference-card,
+  .formula-card,
+  .calculation-card,
+  .observation-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix for formula drop-down and controls exceeding screen width */
+  .formula-select-container,
+  .formula-selector,
+  .formula-header,
+  .select-formula-wrap,
+  .card-header-select,
+  #formula select,
+  .formula-card select {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    font-size: 0.85rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Ensure math renders (KaTeX / MathJax) wrap properly and don't push out the screen */
+  .katex-display,
+  .formula-card *,
+  .sidebar-card-content {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+}

@@ -1,0 +1,218 @@
+/* ---- Reference Base ---- */
+.reference-card {
+  min-height: 15rem;
+  min-width: 24rem;
+  resize: both;
+  overflow: auto;
+}
+
+.reference-card, .graphs-card { cursor: grab; }
+.reference-card.is-dragging { opacity: .45; outline: 2px dashed #089b93; }
+.reference-card.drag-over { outline: 3px solid #089b93; }
+.graphs-card.is-dragging { opacity: .45; outline: 2px dashed #089b93; }
+.graphs-card.drag-over { outline: 3px solid #089b93; }
+
+.reference-content {
+  padding: 1.4rem 1.6rem;
+  color: #536160;
+  font-size: 1.35rem;
+}
+
+.reference-content p+p {
+  margin-top: .9rem;
+}
+
+.formula-content {
+  color: #087d76;
+  font-family: Georgia, serif;
+  font-size: 1.85rem;
+  text-align: center;
+}
+
+.diagram-figure { background: #f5fbfa; }
+.diagram-figure area { cursor: help; }
+
+.reference-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 36rem;
+  max-height: 42rem;
+  object-fit: contain;
+  padding: 0.5rem;
+  background: #f5fbfa;
+}
+
+.diagram-caption { display: none; }
+.is-active-workspace .diagram-caption {
+  display: block;
+  padding: 0 1.6rem 1rem;
+  color: #536160;
+  font-size: 1.2rem;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ---- Formula Workspace Layout ---- */
+.formula-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 0.9rem;
+}
+
+.formula-selector-card {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1rem 1.4rem;
+  background: #f5fbfa;
+  border: 1px solid #c8dada;
+  border-radius: 0.6rem;
+}
+
+.formula-selector-card label {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #087d76;
+  white-space: nowrap;
+}
+
+.formula-dropdown {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 1.3rem;
+  border: 1px solid #089b93;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  color: #216764;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.formula-dropdown:focus {
+  box-shadow: 0 0 0 3px rgba(8, 155, 147, 0.25);
+}
+
+.formula-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.box-label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #087d76;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formula-usage-box {
+  padding: 1.2rem;
+  background: #f8fafc;
+  border-left: 0.4rem solid #089b93;
+  border-radius: 0.4rem;
+  border-top: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.formula-usage-text {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: #334155;
+  margin: 0;
+}
+
+.formula-display-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.formula-latex-box,
+.formula-variables-box {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+  border: 1px solid #dce7e6;
+  border-radius: 0.6rem;
+  background: #ffffff;
+}
+
+.latex-render {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 12rem;
+  padding: 1rem;
+  background: #f5fbfa;
+  border-radius: 0.4rem;
+  font-size: 2rem;
+  color: #087d76;
+}
+
+.variables-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.variables-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.8rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+}
+
+.var-symbol { font-weight: 700; color: #087d76; }
+.var-desc { color: #475569; }
+
+/* ---- Workspace Reference Final Layout ---- */
+.workspace-reference {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.workspace-reference .reference-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 95rem;
+  min-height: 44rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  resize: none;
+}
+
+.workspace-reference .reference-card .reference-content,
+.workspace-reference .reference-card img {
+  height: 100%;
+}
+
+.workspace-reference .task-title {
+  display: none;
+}

@@ -1,0 +1,179 @@
+:root {
+  --px-prov-f05: "2923";
+}
+
+/* ---- Task Heading ---- */
+.task-heading {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  background-image: linear-gradient(to bottom, var(--clr-side-background2), var(--clr-side-background3));
+}
+
+.task-title {
+  padding: .3rem 1.6rem;
+  color: white;
+  background-image: linear-gradient(to bottom, var(--clr-side-background2), var(--clr-side-background3));
+  font-size: 1.8rem;
+  letter-spacing: .15rem;
+}
+
+.task-heading .task-title {
+  flex: 1;
+  background: none;
+}
+
+.heading-actions {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .3rem 1rem;
+}
+
+.heading-button {
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid #ffffff90;
+  border-radius: .4rem;
+  background: #ffffff1c;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.heading-button:hover { background: #ffffff38; }
+.help-button { font-family: Georgia, serif; font-size: 1.55rem; border-radius: 50%; }
+
+/* ---- Apparatus Wrap & Viewport ---- */
+.apparatus-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.three-viewport {
+  width: 100%;
+  height: 44rem;
+  min-height: 44rem;
+  overflow: hidden;
+  background: #f4f4f0;
+}
+
+.three-viewport canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  cursor: grab;
+  touch-action: none;
+}
+
+.three-viewport canvas:active {
+  cursor: grabbing;
+}
+
+.drag-hint {
+  position: absolute;
+  bottom: 1.1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: .35rem .9rem;
+  border-radius: 1.5rem;
+  background: #ffffffdf;
+  color: #087d76;
+  box-shadow: 0 .2rem .5rem #4c6c6b2e;
+  font-size: 1.15rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ---- Simulation Toolbar ---- */
+.simulation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 1.2rem;
+  border-top: 1px solid #d9e5e5;
+}
+
+.status-chip {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  color: #4b4d4d;
+  font-size: 1.4rem;
+}
+
+.status-dot {
+  width: .9rem;
+  height: .9rem;
+  border-radius: 50%;
+  background: #929292;
+}
+
+.status-dot.running {
+  background: #089b93;
+  box-shadow: 0 0 0 .3rem #089b9333;
+}
+
+.status-dot.paused {
+  background: #c48329;
+}
+
+.button-group {
+  display: flex;
+  gap: .7rem;
+}
+
+.control-button {
+  padding: .5rem 1.2rem;
+  border: 1px solid #168983;
+  border-radius: .4rem;
+  background: white;
+  color: #0a756e;
+  font-weight: 700;
+  transition: background .18s, color .18s, transform .18s;
+}
+
+.control-button:hover {
+  transform: translateY(-1px);
+  background: #e7f6f5;
+}
+
+.control-button.primary {
+  background: #089b93;
+  color: #fff;
+}
+
+.control-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---- Lab Stage ---- */
+.lab-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28rem;
+  min-height: 44rem;
+  background: #ffffff;
+}
+
+.lab-stage canvas {
+  min-height: 44rem;
+  height: 44rem;
+  background: #ffffff;
+}
+
+.experiment-sidepanel {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+  overflow: auto;
+  padding: 1rem;
+  border-left: 1px solid #d2e1e0;
+  background: #ffffff;
+}

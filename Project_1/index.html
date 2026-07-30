@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-px-prov-f01="2c38">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="px-prov-f00" content="0f16" />
   <meta name="description"
     content="Interactive verification of Faraday's and Lenz's laws of electromagnetic induction." />
   <title>Faraday's and Lenz's Law | SOLVE Virtual Lab</title>
@@ -11,8 +12,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="images/nitk.ico" />
+  
+  <!-- KaTeX Library for LaTeX Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <!-- Main Global Styles -->
   <link rel="stylesheet" href="css/general.css" />
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Layout Styles from css/base/ with Screen-Size Detection -->
+  <link rel="stylesheet" href="css/base/desktop-layout.css" />
+  <link rel="stylesheet" href="css/components/graphs.css" />
+  <link rel="stylesheet" href="css/base/tablet-layout.css" media="screen and (min-width: 769px) and (max-width: 1024px)" />
+  <link rel="stylesheet" href="css/base/mobile-layout.css" media="screen and (max-width: 768px)" />
+
   <script type="importmap">
     { "imports": {
       "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
@@ -31,24 +45,23 @@
   </header>
 
   <div class="container">
+    <!-- Left Navigation Sidebar -->
     <nav class="sidebar" aria-label="Experiment sections">
       <ul class="tool-menu">
         <li class="tool-list"><button class="tool-link icon-diagram workspace-link" data-workspace="diagram"
             aria-label="Diagram"></button><span>Diagram</span></li>
-        <li class="tool-list"><button class="tool-link icon-simulation workspace-link is-active" data-workspace="simulation"
-            aria-label="Simulation"></button><span>Simulation</span></li>
         <li class="tool-list"><button class="tool-link icon-formula workspace-link" data-workspace="formula"
             aria-label="Formula"></button><span>Formula</span></li>
-        <li class="tool-list"><button class="tool-link icon-calculation workspace-link" data-workspace="calculation"
-            aria-label="Calculation"></button><span>Calculation</span></li>
-        <li class="tool-list"><button id="railGraphButton" class="rail-button icon-graph workspace-link" data-workspace="graphs"
-            aria-label="Show graphs"></button><span>Graph</span></li>
-        <li class="tool-list"><button class="tool-link icon-results workspace-link" data-workspace="results"
-            aria-label="Results"></button><span>Results</span></li>
+        <li class="tool-list"><button class="tool-link icon-simulation workspace-link is-active" data-workspace="simulation"
+            aria-label="Simulation"></button><span>Simulation</span></li>
         <li class="tool-list"><button class="tool-link icon-observation workspace-link" data-workspace="observation"
             aria-label="Observation"></button><span>Observation</span></li>
-        <li class="tool-list"><button class="tool-link icon-experiments workspace-link" data-workspace="experiments"
-            aria-label="Experiments"></button><span>Experiment</span></li>
+        <li class="tool-list"><button id="railGraphButton" class="rail-button icon-graph workspace-link" data-workspace="graphs"
+            aria-label="Show graphs"></button><span>Graph</span></li>
+        <li class="tool-list"><button class="tool-link icon-calculation workspace-link" data-workspace="calculation"
+            aria-label="Calculation"></button><span>Calculation</span></li>
+        <li class="tool-list"><button class="tool-link icon-results workspace-link" data-workspace="results"
+            aria-label="Results"></button><span>Results</span></li>
       </ul>
     </nav>
 
@@ -69,24 +82,91 @@
             </div>
           </div>
           <div class="lab-stage">
-            <div id="workspaceViewport" class="workspace-viewport"><div id="simulationWindow" class="apparatus-wrap">
-              <div id="threeViewport" class="three-viewport" role="img" aria-label="Interactive three-dimensional electromagnetic induction apparatus. Drag to orbit; in Manual mode drag the magnet frame to set its position."></div>
-              <div class="meter-panel" aria-label="Legacy voltmeter reading" hidden>
-                <p class="meter-label">Digital Voltmeter</p>
-                <output id="voltmeter" class="voltmeter">+0.000 V</output>
-                <div class="polarity-row"><span id="positiveLead" class="lead-label">+</span><span id="polarityText">No
-                    induced EMF</span><span id="negativeLead" class="lead-label">−</span></div>
-                <div class="legend"><span><i class="legend-line flux"></i>Flux</span><span><i
-                      class="legend-line current"></i>Induced current</span></div>
+            <div id="workspaceViewport" class="workspace-viewport">
+              <div id="simulationWindow" class="apparatus-wrap">
+                <!-- Viewport Fullscreen Button (Top-Right Corner) -->
+                <button id="viewportFullscreenButton" class="viewport-fullscreen-btn" aria-label="Toggle viewport full mode" title="Full Viewport Mode">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                  </svg>
+                </button>
+
+                <div id="threeViewport" class="three-viewport" role="img" aria-label="Interactive three-dimensional electromagnetic induction apparatus. Drag apparatus parts to interact; drag empty space to orbit."></div>
+                <div class="meter-panel" aria-label="Legacy voltmeter reading" hidden>
+                  <p class="meter-label">Digital Voltmeter</p>
+                  <output id="voltmeter" class="voltmeter">+0.000 V</output>
+                  <div class="polarity-row"><span id="positiveLead" class="lead-label">+</span><span id="polarityText">No
+                      induced EMF</span><span id="negativeLead" class="lead-label">−</span></div>
+                  <div class="legend"><span><i class="legend-line flux"></i>Flux</span><span><i
+                        class="legend-line current"></i>Induced current</span></div>
+                </div>
+                <p id="dragHint" class="drag-hint">Manual mode: drag the magnet frame. Drag empty space to orbit the view.</p>
               </div>
-              <p id="dragHint" class="drag-hint">Manual mode: drag the frame to position the magnet. Drag empty space to orbit the view.</p>
             </div>
-            </div>
-            <aside class="experiment-sidepanel" aria-label="Experiment controls and results">
-              <details id="variables" class="side-details">
+
+            <!-- Right Experiment Controls Sidebar -->
+            <aside class="experiment-sidepanel" aria-label="Experiment controls">
+              <!-- 1. Mode -->
+              <details id="modesDetails" class="side-details">
+                <summary><span>Mode</span></summary>
+                <div class="mode-controls" aria-label="Motion mode">
+                  <div class="mode-button-group" role="group" aria-label="Motion mode">
+                    <button class="mode-button is-active" data-mode="oscillate" type="button">Oscillate</button>
+                    <button class="mode-button" data-mode="manual" type="button">Manual</button>
+                  </div>
+                </div>
+              </details>
+
+              <!-- 2. Controls -->
+              <details id="variables" class="side-details" open>
                 <summary><span>Controls</span><button id="controlsLockButton" class="controls-lock" type="button" aria-pressed="false" title="Lock variable changes while oscillating">🔓 Lock</button></summary>
+                <div class="display-controls" aria-label="Simulation overlays">
+                  <p>Show</p>
+                  <label><input id="magneticFieldToggle" type="checkbox" checked /> Magnetic fields</label>
+                  <label><input id="inducedCurrentToggle" type="checkbox" checked /> Induced current</label>
+                </div>
+                <div class="variables-sections">
+                  <!-- Initial Angle (matches PARAM_LIMITS: min: -25, max: 25) -->
+                  <div class="var-div">
+                    <label for="angleControl">Initial Angle</label>
+                    <input type="number" id="angleNumberInput" class="var-number-input" min="-25" max="25" value="22" step="1">
+                    <input type="range" id="angleControl" min="-25" max="25" value="22" step="1">
+                  </div>
+
+                  <!-- Coil Turns (matches PARAM_LIMITS: min: 10, max: 1000) -->
+                  <div class="var-div">
+                    <label for="turnsControl">Coil Turns</label>
+                    <input type="number" id="turnsNumberInput" class="var-number-input" min="10" max="1000" value="250" step="10">
+                    <input type="range" id="turnsControl" min="10" max="1000" value="250" step="10">
+                  </div>
+
+                  <!-- Magnet Strength (matches PARAM_LIMITS: min: 0.1, max: 2.0) -->
+                  <div class="var-div">
+                    <label for="strengthControl">Magnet Strength</label>
+                    <input type="number" id="strengthNumberInput" class="var-number-input" min="0.1" max="2.0" value="1.0" step="0.1">
+                    <input type="range" id="strengthControl" min="0.1" max="2.0" value="1.0" step="0.1">
+                  </div>
+
+                  <!-- Damping Factor (matches PARAM_LIMITS: min: 0.0, max: 1.0) -->
+                  <div class="var-div">
+                    <label for="dampingControl">Damping Factor</label>
+                    <input type="number" id="dampingNumberInput" class="var-number-input" min="0.0" max="1.0" value="0.08" step="0.01">
+                    <input type="range" id="dampingControl" min="0.0" max="1.0" value="0.08" step="0.01">
+                  </div>
+
+                  <!-- Simulation Speed (matches PARAM_LIMITS: min: 0.1, max: 3.0) -->
+                  <div class="var-div">
+                    <label for="speedControl">Simulation Speed</label>
+                    <input type="number" id="speedNumberInput" class="var-number-input" min="0.1" max="3.0" value="1.0" step="0.1">
+                    <input type="range" id="speedControl" min="0.1" max="3.0" value="1.0" step="0.1">
+                  </div>
+                </div>
+              </details>
+              
+              <!-- 3. Presets -->
+              <details id="presetsDetails" class="side-details">
+                <summary><span>Preset</span></summary>
                 <div class="control-presets" aria-label="Experiment presets">
-                  <p>Presets</p>
                   <div class="preset-grid">
                     <button class="preset-button" data-preset="entering" type="button">Magnet entering coil</button>
                     <button class="preset-button" data-preset="leaving" type="button">Magnet leaving coil</button>
@@ -98,71 +178,6 @@
                     <button class="preset-button" data-preset="fewTurns" type="button">Few turns</button>
                     <button class="preset-button" data-preset="reverse" type="button">Reverse magnet poles</button>
                   </div>
-                </div>
-                <div class="mode-controls" aria-label="Motion mode">
-                  <p>Mode</p>
-                  <div class="mode-button-group" role="group" aria-label="Motion mode">
-                    <button class="mode-button is-active" data-mode="oscillate" type="button">Oscillate</button>
-                    <button class="mode-button" data-mode="freefall" type="button">Freefall</button>
-                    <button class="mode-button" data-mode="manual" type="button">Manual</button>
-                  </div>
-                </div>
-                <div class="display-controls" aria-label="Simulation overlays">
-                  <p>Show</p>
-                  <label><input id="magneticFieldToggle" type="checkbox" checked /> Magnetic fields</label>
-                  <label><input id="inducedCurrentToggle" type="checkbox" checked /> Induced current</label>
-                </div>
-                <div class="variables-sections">
-                  <label class="var-div" for="angleControl"><span>Initial Angle</span><output
-                      id="angleOutput">22°</output><input id="angleControl" type="range" min="5" max="25" value="22"
-                      step="1" /></label>
-                  <label class="var-div" for="turnsControl"><span>Coil Turns</span><output
-                      id="turnsOutput">250</output><input id="turnsControl" type="range" min="100" max="500" value="250"
-                      step="25" /></label>
-                  <label class="var-div" for="strengthControl"><span>Magnet Strength</span><output
-                      id="strengthOutput">1.0 T</output><input id="strengthControl" type="range" min="0.5" max="1.5"
-                      value="1" step="0.1" /></label>
-                  <label class="var-div" for="dampingControl"><span>Damping Factor</span><output
-                      id="dampingOutput">0.08</output><input id="dampingControl" type="range" min="0.02" max="0.18"
-                      value="0.08" step="0.01" /></label>
-                  <label class="var-div" for="speedControl"><span>Simulation Speed</span><output
-                      id="speedOutput">1.0×</output><input id="speedControl" type="range" min="0.5" max="2" value="1"
-                      step="0.25" /></label>
-                </div>
-              </details>
-              <details id="observations" class="side-details">
-                <summary>Results</summary>
-                <div class="readout-grid">
-                  <p>Angle <strong id="angleValue">22.0°</strong></p>
-                  <p id="velocityLabel">Velocity <strong id="velocityValue">0.000 rad/s</strong></p>
-                  <p>Flux <strong id="fluxValue">0.000 mWb</strong></p>
-                  <p>EMF <strong id="emfValue">+0.000 V</strong></p>
-                  <p>Field at coil <strong id="fieldValue">0.0 mT</strong></p>
-                  <p>Induced current <strong id="currentValue">0.000 mA</strong></p>
-                  <p>Oscillations <strong id="countValue">0</strong></p>
-                  <p>Motion <strong id="motionValue">Stationary</strong></p>
-                </div>
-                <div class="heat-readout"><span>Electrical energy dissipated</span><strong id="heatValue">0.000
-                    mJ</strong><i class="heat-bar"><b id="heatFill"></b></i></div>
-                <div class="observation-box"><span class="observation-heading">Observation</span>
-                  <p id="observationText">Drag the frame to one side, then release it to begin the experiment.</p>
-                </div>
-                <div class="emf-table-wrap">
-                  <p class="table-heading">Alternating EMF readings</p>
-                  <table class="emf-table">
-                    <thead>
-                      <tr>
-                        <th>Peak</th>
-                        <th>Time</th>
-                        <th>EMF</th>
-                      </tr>
-                    </thead>
-                    <tbody id="emfReadings">
-                      <tr>
-                        <td colspan="3">Release the frame to record readings.</td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </details>
             </aside>
@@ -182,6 +197,7 @@
             </map></div>
           <p class="diagram-caption">Fig. 1: Circuit diagram for the determination of voltage induced in the coil due to the magnet passing through it.</p>
         </section>
+
         <section id="calculation" class="main__task-div reference-card">
           <h2 class="task-title">Calculation</h2>
           <div class="reference-content">
@@ -192,12 +208,47 @@
               mechanical amplitude.</p>
           </div>
         </section>
+
         <section id="formula" class="main__task-div reference-card">
           <h2 class="task-title">Formula</h2>
-          <div class="reference-content formula-content">
-            <p>Φ = ∫ B · dA</p>
-            <p>ε = −N dΦ/dt</p>
-            <p>I = ε/R &nbsp; and &nbsp; τ<sub>induced</sub> opposes the change in flux</p>
+          <div class="formula-workspace">
+            <!-- Formula Selection Container -->
+            <div class="formula-selector-card">
+              <label for="formulaSelect">Select Formula:</label>
+              <select id="formulaSelect" class="formula-dropdown">
+                <option value="faraday">Faraday's Law of Electromagnetic Induction</option>
+                <option value="lenz">Lenz's Law &amp; Induced Direction</option>
+                <option value="flux">Magnetic Flux (Φ)</option>
+                <option value="motional">Motional EMF (Conductor moving in B-field)</option>
+                <option value="rotating">EMF in a Rotating Coil</option>
+                <option value="current">Induced Current &amp; Charge</option>
+                <option value="inductance">Self-Induced EMF (Inductance)</option>
+              </select>
+            </div>
+
+            <!-- Formula Display Section -->
+            <div class="formula-detail-card">
+              <!-- Top: Formula Use / Application -->
+              <div class="formula-usage-box">
+                <span class="box-label">Usage &amp; Application</span>
+                <p id="formulaUsage" class="formula-usage-text"></p>
+              </div>
+
+              <!-- Split Container: Left = LaTeX Formula, Right = Variables & Constants -->
+              <div class="formula-display-grid">
+                <!-- Left Box: Rendered Formula -->
+                <div class="formula-latex-box">
+                  <span class="box-label">Formula</span>
+                  <div id="formulaLatex" class="latex-render"></div>
+                </div>
+
+                <!-- Right Box: Variable & Constant Descriptions -->
+                <div class="formula-variables-box">
+                  <span class="box-label">Variables &amp; Constants</span>
+                  <ul id="formulaVariables" class="variables-list"></ul>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -215,19 +266,54 @@
           </div>
         </section>
 
-        <section id="experiments" class="main__task-div reference-card experiments-card">
-          <h2 class="task-title">Experiments</h2>
-          <div class="reference-content">
-            <p><strong>Try different conditions:</strong> vary the coil turns, magnet strength and starting angle, then compare the peak EMF readings.</p>
-            <p>Use Reset between trials so each experiment starts from the same position.</p>
-          </div>
-        </section>
-
         <section id="observation" class="main__task-div reference-card observation-card">
           <h2 class="task-title">Observation</h2>
           <div class="reference-content">
-            <p>When the magnet moves toward or away from the coil, the magnetic flux changes and the meter registers an induced EMF.</p>
-            <p>The polarity reverses as the motion reverses. The EMF falls to nearly zero at each turning point because the magnet is momentarily stationary.</p>
+            <div class="observation-box"><span class="observation-heading">Observation</span>
+              <p id="observationText">Ready. Select Release to start the gravity-driven oscillation.</p>
+            </div>
+            <div class="emf-table-wrap">
+              <p class="table-heading">Alternating EMF readings</p>
+              <table class="emf-table">
+                <thead>
+                  <tr>
+                    <th>Peak</th>
+                    <th>Time</th>
+                    <th>Position</th>
+                    <th>Speed</th>
+                    <th>EMF</th>
+                  </tr>
+                </thead>
+                <tbody id="emfReadings">
+                  <tr>
+                    <td colspan="3">Release the frame to record readings.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Results Section - Separate Section -->
+        <section id="results" class="main__task-div reference-card results-card">
+          <h2 class="task-title">Results</h2>
+          <div class="reference-content">
+            <div class="readout-grid">
+              <p>Angle <strong id="angleValue">22.0°</strong></p>
+              <p id="velocityLabel">Velocity <strong id="velocityValue">0.000 rad/s</strong></p>
+              <p>Flux <strong id="fluxValue">0.000 mWb</strong></p>
+              <p>EMF <strong id="emfValue">+0.000 V</strong></p>
+              <p>Field at coil <strong id="fieldValue">0.0 mT</strong></p>
+              <p>Induced current <strong id="currentValue">0.000 mA</strong></p>
+              <p>Oscillations <strong id="countValue">0</strong></p>
+              <p>Motion <strong id="motionValue">Stationary</strong></p>
+            </div>
+            
+            <div class="heat-readout">
+              <span>Electrical energy dissipated</span>
+              <strong id="heatValue">0.000 mJ</strong>
+              <i class="heat-bar"><b id="heatFill"></b></i>
+            </div>
           </div>
         </section>
 

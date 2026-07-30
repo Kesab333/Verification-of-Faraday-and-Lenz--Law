@@ -1,7 +1,9 @@
 /**
  * A compact physical model for a bar magnet moving coaxially through a coil.
- * Distances are SI units.  The visual renderer has its own display scale.
+ * Distances are SI units. The visual renderer has its own display scale.
  */
+const PX_PROV_F09 = "56b1";
+
 export class InductionModel {
   static PENDULUM_LENGTH = 0.39;
   static MAGNET_RADIUS = 0.010;
@@ -16,12 +18,12 @@ export class InductionModel {
       angle: 22,
       turns: 250,
       strength: 1,
-      damping: 0.08,
+      damping: 0.02,
       speed: 1,
       polarity: 1,
       mode: 'oscillate'
     };
-    this.initialState = { theta: 22 * Math.PI / 180, omega: 0 };
+    this.initialState = { theta: (22 * Math.PI) / 180, omega: 0 };
     this.showFields = true;
     this.showCurrent = true;
     this.reset();
@@ -29,6 +31,7 @@ export class InductionModel {
 
   reset() {
     this.time = 0;
+    this.lastHistoryTime = 0;
     this.oscillations = 0;
     this.previousVelocity = 0;
     this.running = false;
@@ -54,10 +57,11 @@ export class InductionModel {
   }
 
   setParameter(name, value) {
-    this.parameters[name] = value;
-    if (name === 'angle' && !this.running) {
-      const direction = Math.sign(this.initialState.theta) || 1;
-      this.initialState = { theta: direction * value * Math.PI / 180, omega: 0 };
+    const numVal = Number(value);
+    this.parameters[name] = numVal;
+    
+    if (name === 'angle' && !this.running && this.parameters.mode !== 'manual') {
+      this.initialState = { theta: (numVal * Math.PI) / 180, omega: 0 };
       this.reset();
       return;
     }
@@ -72,7 +76,7 @@ export class InductionModel {
 
   setInitialState({ theta, omega = 0 }) {
     this.initialState = { theta, omega };
-    this.parameters.angle = Math.round(Math.abs(theta) * 180 / Math.PI);
+    this.parameters.angle = Math.round((theta * 180) / Math.PI);
     this.reset();
   }
 
@@ -82,9 +86,20 @@ export class InductionModel {
     this.omega = angularVelocity;
     this.axialPosition = this.magnetOffset;
     this.axialVelocity = this.linearVelocity;
-    this.parameters.angle = Math.round(Math.abs(theta) * 180 / Math.PI);
+    this.parameters.angle = Math.round((theta * 180) / Math.PI);
     this.updateElectromagnetism();
+    
+    // Increment time slightly during manual drag for oscilloscope display
+    this.time += 0.016;
     this.recordHistory();
+  }
+
+  calculateFluxAndEmf(dt = 0.016) {
+    this.updateElectromagnetism();
+  }
+
+  recalculateState() {
+    this.updateElectromagnetism();
   }
 
   setDisplay(name, enabled) {
@@ -99,7 +114,7 @@ export class InductionModel {
 
   release() {
     if (this.parameters.mode === 'manual') return;
-    if (this.complete) this.reset();
+    if (this.complete || this.time === 0) this.reset();
     this.running = true;
   }
 
@@ -110,10 +125,9 @@ export class InductionModel {
   coilResistance() {
     const wireArea = Math.PI * InductionModel.WIRE_RADIUS ** 2;
     const wireLength = this.parameters.turns * 2 * Math.PI * InductionModel.COIL_RADIUS;
-    return InductionModel.COPPER_RESISTIVITY * wireLength / wireArea;
+    return (InductionModel.COPPER_RESISTIVITY * wireLength) / wireArea;
   }
 
-  /** Field on the magnet's axis for a uniformly magnetised finite cylinder. */
   magneticFieldAtCoil(offset) {
     const radius = InductionModel.MAGNET_RADIUS;
     const halfLength = InductionModel.MAGNET_LENGTH / 2;
@@ -127,8 +141,6 @@ export class InductionModel {
   }
 
   fluxForOffset(offset) {
-    // A coil is wider than the magnet. This finite-radius correction prevents
-    // treating the on-axis field as if it were uniform across the whole coil.
     const coupling = InductionModel.MAGNET_RADIUS ** 2 /
       (InductionModel.MAGNET_RADIUS ** 2 + InductionModel.COIL_RADIUS ** 2);
     const area = Math.PI * InductionModel.COIL_RADIUS ** 2;
@@ -154,8 +166,7 @@ export class InductionModel {
   electromagneticTorque() {
     if (this.parameters.mode === 'freefall') return 0;
     const dxDTheta = InductionModel.PENDULUM_LENGTH * Math.cos(this.theta);
-    // I = emf/R and F = I N dPhi/dx give a torque which always opposes motion.
-    return -(this.parameters.turns ** 2 * this.fluxGradientValue ** 2 /
+    return -((this.parameters.turns ** 2 * this.fluxGradientValue ** 2) /
       this.circuitResistance) * dxDTheta ** 2 * this.omega;
   }
 
@@ -184,9 +195,12 @@ export class InductionModel {
       this.theta += this.omega * scaledDt;
       this.axialPosition = this.magnetOffset;
       this.axialVelocity = this.linearVelocity;
+
       if (this.previousVelocity > 0 && this.omega <= 0) this.oscillations += 1;
       this.previousVelocity = this.omega;
-      if (Math.abs(this.theta) < 0.003 && Math.abs(this.omega) < 0.006 && this.time > 2) {
+
+      // Stopped condition: require position AND velocity to be near zero over time
+      if (Math.abs(this.theta) < 0.002 && Math.abs(this.omega) < 0.005 && this.time > 1.5) {
         this.theta = 0;
         this.omega = 0;
         this.running = false;
@@ -197,18 +211,27 @@ export class InductionModel {
     this.time += scaledDt;
     this.updateElectromagnetism();
     this.recordPeak();
-    this.electricalEnergy += this.emf ** 2 / this.circuitResistance * scaledDt;
-    this.recordHistory();
+    this.electricalEnergy += ((this.emf ** 2) / this.circuitResistance) * scaledDt;
+
+    // Record history at ~60 Hz simulation time intervals (0.015s)
+    if (this.time - this.lastHistoryTime >= 0.015 || this.history.length === 0) {
+      this.recordHistory();
+      this.lastHistoryTime = this.time;
+    }
   }
 
   recordHistory() {
     this.history.push({
       time: this.time,
       emf: this.emf,
-      angle: this.theta * 180 / Math.PI,
+      angle: (this.theta * 180) / Math.PI,
       position: this.axialPosition * 100
     });
-    if (this.history.length > 360) this.history.shift();
+
+    // Retain trailing 10.0 seconds window
+    while (this.history.length > 0 && (this.time - this.history[0].time > 10.0)) {
+      this.history.shift();
+    }
   }
 
   recordPeak() {
@@ -232,7 +255,7 @@ export class InductionModel {
   get state() {
     return {
       ...this,
-      angleDegrees: this.theta * 180 / Math.PI,
+      angleDegrees: (this.theta * 180) / Math.PI,
       velocity: this.parameters.mode === 'freefall' ? this.axialVelocity : this.omega,
       fluxMilliWebers: this.flux * 1000,
       currentMilliAmps: this.current * 1000,

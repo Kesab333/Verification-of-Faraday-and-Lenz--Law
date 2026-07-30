@@ -1,0 +1,68 @@
+/* ---- Help Overlay ---- */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15, 35, 35, .38);
+}
+
+.help-overlay[hidden] {
+  display: none;
+}
+
+.help-popover {
+  position: fixed;
+  z-index: 101;
+  width: min(32rem, calc(100vw - 3rem));
+  padding: 1.5rem;
+  border: 2px solid #089b93;
+  border-radius: .8rem;
+  background: #fff;
+  box-shadow: 0 1rem 3rem rgba(0,0,0,.25);
+}
+
+.help-step {
+  margin-bottom: .25rem;
+  color: #087d76;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.help-popover h3 {
+  color: #25504e;
+  font-size: 1.8rem;
+}
+
+.help-popover > p:not(.help-step) {
+  margin-top: .65rem;
+  color: #485554;
+  font-size: 1.35rem;
+  line-height: 1.45;
+}
+
+.help-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .7rem;
+  margin-top: 1.4rem;
+}
+
+.help-highlight {
+  position: relative;
+  z-index: 102 !important;
+  outline: 3px solid #ffe36d;
+  outline-offset: 5px;
+  border-radius: .45rem;
+  animation: help-glow 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes help-glow {
+  from {
+    box-shadow: 0 0 0 .2rem rgba(255, 227, 109, .4), 0 0 .7rem .15rem #ffe36d;
+  }
+  to {
+    box-shadow: 0 0 0 .45rem rgba(255, 227, 109, .7), 0 0 1.5rem .4rem #ffe36d;
+  }
+}
