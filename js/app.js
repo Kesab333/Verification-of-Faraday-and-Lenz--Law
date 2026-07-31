@@ -151,7 +151,7 @@ function processManualPeakDetection(dt) {
 }
 
 // ============================================================
-//  UPDATED setParameter: Dynamic bounds checking
+//  UPDATED setParameter: Dynamic bounds checking + state sync
 // ============================================================
 export function setParameter(name, value) {
   let safeValue = value;
@@ -196,6 +196,13 @@ export function setParameter(name, value) {
     if (mode === 'manual') {
       const omega = (targetRad - lastManualTheta) / dt;
       model.setManualAngle(targetRad, omega);
+      
+      // Fix: Directly sync model state in manual mode
+      if (model.state) {
+        model.state.theta = targetRad;
+        model.state.angleDegrees = safeValue;
+      }
+      
       recalculateEMF(dt);
     } else if (mode === 'oscillate') {
       model.setInitialState({ theta: targetRad, omega: 0 });
@@ -256,6 +263,13 @@ controls.forEach((c) => {
           if (mode === 'manual') {
             const omega = (targetRad - lastManualTheta) / dt;
             model.setManualAngle(targetRad, omega);
+            
+            // Fix: Explicitly assign theta and angleDegrees on state
+            if (model.state) {
+              model.state.theta = targetRad;
+              model.state.angleDegrees = clampedVal;
+            }
+            
             recalculateEMF(dt);
           } else if (mode === 'oscillate' && !model.running) {
             model.setInitialState({ theta: targetRad, omega: 0 });
@@ -293,7 +307,26 @@ controls.forEach((c) => {
   }
 });
 
+// ============================================================
+//  UPDATED setMode: Force pause and clear drag references
+// ============================================================
 export function setMode(mode) {
+  // 1. Force stop active simulation running state
+  if (typeof model.pause === 'function') {
+    model.pause();
+  } else if (model.state) {
+    model.running = false;
+    model.state.running = false;
+  }
+
+  // 2. Reset 3D scene drag interaction
+  if (scene) {
+    scene.drag = null;
+    scene.isPointerDown = false;
+    scene.isLongPress = false;
+    if (scene.controls) scene.controls.enabled = true;
+  }
+
   model.setMode(mode);
   manualPeakEmf = 0;
   physicsAccumulator = 0;
@@ -551,10 +584,19 @@ function sync(state) {
 // ---- Control Actions ----
 function release() { model.release(); sync(model.state); }
 function toggle() { model.running ? model.pause() : model.release(); sync(model.state); }
+
+// ============================================================
+//  UPDATED reset: Clear drag state and pause simulation
+// ============================================================
 function reset() {
+  if (typeof model.pause === 'function') model.pause();
   model.reset();
   manualPeakEmf = 0;
   physicsAccumulator = 0;
+  if (scene) {
+    scene.drag = null;
+    if (scene.controls) scene.controls.enabled = true;
+  }
   if (model.state) {
     model.state.history = [];
     model.state.readings = [];

@@ -217,6 +217,22 @@ export class InductionScene {
     }
   }
 
+  // ---- Drag cleanup helper ----
+  resetDragState() {
+    this.drag = null;
+    this.isPointerDown = false;
+    this.isLongPress = false;
+    if (this.controls) this.controls.enabled = true;
+  }
+
+  // ---- Set angle programmatically (clamped) ----
+  setAngle(rad) {
+    this.currentTheta = clamp(rad, -SAFE_ANGLE, SAFE_ANGLE);
+    if (this.frameGroup) {
+      this.frameGroup.rotation.z = this.currentTheta;
+    }
+  }
+
   addInteraction() {
     const getPointer = (event) => {
       const rect = this.renderer.domElement.getBoundingClientRect();
@@ -273,11 +289,14 @@ export class InductionScene {
       if (this.drag) {
         this.onManualAngle(this.drag.lastTheta, 0);
         this.drag = null;
-        this.controls.enabled = true;
+        if (this.controls) this.controls.enabled = true;
         this.isLongPress = false;
         return;
       }
-      if (!this.clickStart) return;
+      if (!this.clickStart) {
+        this.resetDragState();
+        return;
+      }
       const clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
       const clientY = event.changedTouches ? event.changedTouches[0].clientY : event.clientY;
       if (!this.isLongPress && Math.hypot(clientX - this.clickStart.x, clientY - this.clickStart.y) < 6) {
@@ -292,6 +311,8 @@ export class InductionScene {
               this.controls.enabled = false;
             }
           }
+          this.clickStart = null;
+          this.isLongPress = false;
           return;
         }
         const action = hit.object.userData.action;
