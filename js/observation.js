@@ -112,7 +112,7 @@ export function getLabReferenceHTML() {
  */
 export function getSituationalObservationsHTML() {
   return `
-    <details class="situational-observations-accordion" style="background: #ffffff; border: 1px solid #dce7e6; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; margin-top: 10px;" open>
+    <details class="situational-observations-accordion" style="background: #ffffff; border: 1px solid #dce7e6; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; margin-top: 10px;" >
       <summary style="padding: 10px 12px; color: #168983; font-weight: bold; font-size: 0.95em; cursor: pointer !important; user-select: none; display: flex; justify-content: space-between; align-items: center; list-style: none; background: #f4f8f8;">
         <span>Situational Observations</span>
         <span style="font-size: 0.8em; color: #168983; display: inline-block;">▼</span>

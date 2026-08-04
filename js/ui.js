@@ -347,45 +347,48 @@ export function initWorkspace(model, scene, syncCallback, emfGraph, angleGraph) 
   }
 
   function updateWorkspaceVisibility(name) {
-    const isInteractiveTab = name === 'simulation' || name === 'graphs';
+  const isInteractiveTab = name === 'simulation' || name === 'graphs';
 
-    // 1. Target Toolbar Action Containers
-    const toolbarContainers = document.querySelectorAll(
-      '.simulation-toolbar, .sim-action-bar, .workspace-toolbar, .card-toolbar, .control-bar, .simulation-header, .card-sub-header, .action-bar, .toolbar, .workspace-controls-header, .workspace-controls'
-    );
-    toolbarContainers.forEach((container) => {
-      container.style.display = isInteractiveTab ? '' : 'none';
-    });
+  // 1. Target Toolbar Action Containers
+  const toolbarContainers = document.querySelectorAll(
+    '.simulation-toolbar, .sim-action-bar, .workspace-toolbar, .card-toolbar, .control-bar, .simulation-header, .card-sub-header, .action-bar, .toolbar, .workspace-controls-header, .workspace-controls'
+  );
+  toolbarContainers.forEach((container) => {
+    container.style.display = isInteractiveTab ? '' : 'none';
+  });
 
-    // 2. Target Specific Elements (Status, Release, Pause, Reset, Help)
-    const targets = [
-      elements.release,
-      elements.pause,
-      elements.reset,
-      elements.status,
-      elements.dot,
-      $('#experimentStatus'),
-      $('#statusDot'),
-      $('#releaseButton'),
-      $('#pauseButton'),
-      $('#resetButton'),
-      $('#helpButton'),
-      $('.help-button'),
-      $('.help-btn'),
-      $('.help-icon'),
-      $('.status-chip'),
-      $('.button-group'),
-      $('.control-buttons-row')
-    ];
+  // 2. Target Specific Elements (Status, Release, Pause, Reset)
+  // NOTE: Help button selectors removed from this list so Help remains visible everywhere
+  const targets = [
+    elements.release,
+    elements.pause,
+    elements.reset,
+    elements.status,
+    elements.dot,
+    $('#experimentStatus'),
+    $('#statusDot'),
+    $('#releaseButton'),
+    $('#pauseButton'),
+    $('#resetButton'),
+    $('.status-chip'),
+    $('.button-group'),
+    $('.control-buttons-row')
+  ];
 
-    targets.forEach((el) => {
-      if (el) {
-        el.style.display = isInteractiveTab ? '' : 'none';
-      }
-    });
+  targets.forEach((el) => {
+    if (el) {
+      el.style.display = isInteractiveTab ? '' : 'none';
+    }
+  });
 
-    updateContextualSidebar(name, model);
-  }
+  // Ensure Help elements explicitly remain visible regardless of the active tab
+  const helpElements = document.querySelectorAll('#helpButton, .help-button, .help-btn, .help-icon');
+  helpElements.forEach((el) => {
+    el.style.display = '';
+  });
+
+  updateContextualSidebar(name, model);
+}
 
   function selectWorkspace(name) {
     const next = workspaceSections[name];

@@ -21,7 +21,8 @@
   <link rel="stylesheet" href="css/general.css" />
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Layout Styles from css/base/ with Screen-Size Detection -->
+  <!-- Layout Styles & Component Styles -->
+  <link rel="stylesheet" href="css/components/apparatus.css?v=2" />
   <link rel="stylesheet" href="css/base/desktop-layout.css" />
   <link rel="stylesheet" href="css/components/graphs.css" />
   <link rel="stylesheet" href="css/base/tablet-layout.css" media="screen and (min-width: 769px) and (max-width: 1024px)" />
@@ -72,22 +73,21 @@
             <button id="helpButton" class="heading-button help-button" aria-label="Open simulation help">?</button>
             <button id="fullscreenButton" class="heading-button" aria-label="View website fullscreen" title="Fullscreen">⛶</button>
           </div></div>
+          
           <div class="simulation-toolbar">
-            <div class="status-chip"><span class="status-dot" id="statusDot"></span><span id="experimentStatus">Ready to
-                release</span></div>
-            <div class="button-group">
-              <button id="releaseButton" class="control-button primary">Release</button>
-              <button id="pauseButton" class="control-button">Pause</button>
-              <button id="resetButton" class="control-button">Reset</button>
+            <div class="status-chip">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="experimentStatus">Ready to release</span>
             </div>
           </div>
+
           <div class="lab-stage">
             <div id="workspaceViewport" class="workspace-viewport">
               <div id="simulationWindow" class="apparatus-wrap">
-                <!-- Viewport Fullscreen Button (Top-Right Corner) -->
+                <!-- Viewport Fullscreen Button -->
                 <button id="viewportFullscreenButton" class="viewport-fullscreen-btn" aria-label="Toggle viewport full mode" title="Full Viewport Mode">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 2 2h3"/>
                   </svg>
                 </button>
 
@@ -104,82 +104,141 @@
               </div>
             </div>
 
-            <!-- Right Experiment Controls Sidebar -->
+            <!-- Right Experiment Controls Side Panel -->
             <aside class="experiment-sidepanel" aria-label="Experiment controls">
-              <!-- 1. Mode -->
-              <details id="modesDetails" class="side-details">
-                <summary><span>Mode</span></summary>
-                <div class="mode-controls" aria-label="Motion mode">
-                  <div class="mode-button-group" role="group" aria-label="Motion mode">
-                    <button class="mode-button is-active" data-mode="oscillate" type="button">Oscillate</button>
-                    <button class="mode-button" data-mode="manual" type="button">Manual</button>
-                  </div>
-                </div>
-              </details>
-
-              <!-- 2. Controls -->
-              <details id="variables" class="side-details" open>
-                <summary><span>Controls</span><button id="controlsLockButton" class="controls-lock" type="button" aria-pressed="false" title="Lock variable changes while oscillating">🔓 Lock</button></summary>
-                <div class="display-controls" aria-label="Simulation overlays">
-                  <p>Show</p>
-                  <label><input id="magneticFieldToggle" type="checkbox" checked /> Magnetic fields</label>
-                  <label><input id="inducedCurrentToggle" type="checkbox" checked /> Induced current</label>
-                </div>
-                <div class="variables-sections">
-                  <!-- Initial Angle (matches PARAM_LIMITS: min: -25, max: 25) -->
-                  <div class="var-div">
-                    <label for="angleControl">Initial Angle</label>
-                    <input type="number" id="angleNumberInput" class="var-number-input" min="-25" max="25" value="22" step="1">
-                    <input type="range" id="angleControl" min="-25" max="25" value="22" step="1">
-                  </div>
-
-                  <!-- Coil Turns (matches PARAM_LIMITS: min: 10, max: 1000) -->
-                  <div class="var-div">
-                    <label for="turnsControl">Coil Turns</label>
-                    <input type="number" id="turnsNumberInput" class="var-number-input" min="10" max="1000" value="250" step="10">
-                    <input type="range" id="turnsControl" min="10" max="1000" value="250" step="10">
-                  </div>
-
-                  <!-- Magnet Strength (matches PARAM_LIMITS: min: 0.1, max: 2.0) -->
-                  <div class="var-div">
-                    <label for="strengthControl">Magnet Strength</label>
-                    <input type="number" id="strengthNumberInput" class="var-number-input" min="0.1" max="2.0" value="1.0" step="0.1">
-                    <input type="range" id="strengthControl" min="0.1" max="2.0" value="1.0" step="0.1">
-                  </div>
-
-                  <!-- Damping Factor (matches PARAM_LIMITS: min: 0.0, max: 1.0) -->
-                  <div class="var-div">
-                    <label for="dampingControl">Damping Factor</label>
-                    <input type="number" id="dampingNumberInput" class="var-number-input" min="0.0" max="1.0" value="0.08" step="0.01">
-                    <input type="range" id="dampingControl" min="0.0" max="1.0" value="0.08" step="0.01">
-                  </div>
-
-                  <!-- Simulation Speed (matches PARAM_LIMITS: min: 0.1, max: 3.0) -->
-                  <div class="var-div">
-                    <label for="speedControl">Simulation Speed</label>
-                    <input type="number" id="speedNumberInput" class="var-number-input" min="0.1" max="3.0" value="1.0" step="0.1">
-                    <input type="range" id="speedControl" min="0.1" max="3.0" value="1.0" step="0.1">
-                  </div>
-                </div>
-              </details>
               
-              <!-- 3. Presets -->
-              <details id="presetsDetails" class="side-details">
-                <summary><span>Preset</span></summary>
-                <div class="control-presets" aria-label="Experiment presets">
-                  <div class="preset-grid">
-                    <button class="preset-button" data-preset="entering" type="button">Magnet entering coil</button>
-                    <button class="preset-button" data-preset="leaving" type="button">Magnet leaving coil</button>
-                    <button class="preset-button" data-preset="strong" type="button">Strong magnet</button>
-                    <button class="preset-button" data-preset="weak" type="button">Weak magnet</button>
-                    <button class="preset-button" data-preset="fast" type="button">Fast movement</button>
-                    <button class="preset-button" data-preset="slow" type="button">Slow movement</button>
-                    <button class="preset-button" data-preset="manyTurns" type="button">Many turns</button>
-                    <button class="preset-button" data-preset="fewTurns" type="button">Few turns</button>
-                    <button class="preset-button" data-preset="reverse" type="button">Reverse magnet poles</button>
+              <!-- CARD 1: CONTROLS -->
+              <details id="controlsCard" class="side-details" open>
+                <summary><span>Controls</span></summary>
+                <div class="card-body">
+                  <!-- Execution Action Buttons -->
+                  <div class="control-actions-grid">
+                    <button id="releaseButton" class="control-button primary">Release</button>
+                    <button id="pauseButton" class="control-button">Pause</button>
+                    <button id="resetButton" class="control-button">Reset</button>
+                    <button id="reversePolesButton" class="control-button preset-button" data-preset="reverse" type="button">Reverse Poles</button>
+                  </div>
+
+                  <!-- Motion Mode Selection -->
+                  <div class="control-group">
+                    <span class="group-label">Mode</span>
+                    <div class="mode-button-group" role="group" aria-label="Motion mode">
+                      <button class="mode-button is-active" data-mode="oscillate" type="button">Oscillate</button>
+                      <button class="mode-button" data-mode="manual" type="button">Manual</button>
+                    </div>
+                  </div>
+
+                  <!-- Overlay Visibility Toggles -->
+                  <div class="control-group">
+                    <span class="group-label">Show</span>
+                    <div class="display-controls" aria-label="Simulation overlays">
+                      <label><input id="magneticFieldToggle" type="checkbox" checked /> Magnetic fields</label>
+                      <label><input id="inducedCurrentToggle" type="checkbox" checked /> Induced current</label>
+                    </div>
                   </div>
                 </div>
               </details>
+
+              <!-- CARD 2: VARIABLES -->
+              <details id="variablesCard" class="side-details" open>
+                <summary><span>Variables</span></summary>
+                <div class="card-body">
+                  <div class="variables-sections">
+                    
+                    <!-- Initial Angle -->
+                    <div class="var-div">
+                      <label for="angleControl" class="var-label">Initial Angle</label>
+                      <div class="var-controls-row">
+                        <input type="range" id="angleControl" min="-25" max="25" value="22" step="1">
+                        <div class="input-unit-wrap">
+                          <div class="custom-stepper">
+                            <input type="number" id="angleNumberInput" class="var-number-input" min="-25" max="25" value="22" step="1">
+                            <div class="stepper-arrow-box">
+                              <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                              <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                            </div>
+                          </div>
+                          <span class="var-unit">(°)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Coil Turns -->
+                    <div class="var-div">
+                      <label for="turnsControl" class="var-label">Coil Turns</label>
+                      <div class="var-controls-row">
+                        <input type="range" id="turnsControl" min="10" max="1000" value="250" step="10">
+                        <div class="input-unit-wrap">
+                          <div class="custom-stepper">
+                            <input type="number" id="turnsNumberInput" class="var-number-input" min="10" max="1000" value="250" step="10">
+                            <div class="stepper-arrow-box">
+                              <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                              <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                            </div>
+                          </div>
+                          <span class="var-unit">(n)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Magnet Strength -->
+                    <div class="var-div">
+                      <label for="strengthControl" class="var-label">Magnet Strength</label>
+                      <div class="var-controls-row">
+                        <input type="range" id="strengthControl" min="0.1" max="2.0" value="1.0" step="0.1">
+                        <div class="input-unit-wrap">
+                          <div class="custom-stepper">
+                            <input type="number" id="strengthNumberInput" class="var-number-input" min="0.1" max="2.0" value="1.0" step="0.1">
+                            <div class="stepper-arrow-box">
+                              <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                              <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                            </div>
+                          </div>
+                          <span class="var-unit">(T)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Damping Factor -->
+                    <div class="var-div">
+                      <label for="dampingControl" class="var-label">Damping Factor</label>
+                      <div class="var-controls-row">
+                        <input type="range" id="dampingControl" min="0.0" max="1.0" value="0.08" step="0.01">
+                        <div class="input-unit-wrap">
+                          <div class="custom-stepper">
+                            <input type="number" id="dampingNumberInput" class="var-number-input" min="0.0" max="1.0" value="0.08" step="0.01">
+                            <div class="stepper-arrow-box">
+                              <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                              <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                            </div>
+                          </div>
+                          <span class="var-unit">(s⁻¹)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Simulation Speed -->
+                    <div class="var-div">
+                      <label for="speedControl" class="var-label">Simulation Speed</label>
+                      <div class="var-controls-row">
+                        <input type="range" id="speedControl" min="0.1" max="3.0" value="1.0" step="0.1">
+                        <div class="input-unit-wrap">
+                          <div class="custom-stepper">
+                            <input type="number" id="speedNumberInput" class="var-number-input" min="0.1" max="3.0" value="1.0" step="0.1">
+                            <div class="stepper-arrow-box">
+                              <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                              <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                            </div>
+                          </div>
+                          <span class="var-unit">(x)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </details>
+
             </aside>
           </div>
           <p class="apparatus-caption">The finite bar-magnet field sets the coil flux. The display uses Faraday's law,
@@ -212,7 +271,6 @@
         <section id="formula" class="main__task-div reference-card">
           <h2 class="task-title">Formula</h2>
           <div class="formula-workspace">
-            <!-- Formula Selection Container -->
             <div class="formula-selector-card">
               <label for="formulaSelect">Select Formula:</label>
               <select id="formulaSelect" class="formula-dropdown">
@@ -226,23 +284,18 @@
               </select>
             </div>
 
-            <!-- Formula Display Section -->
             <div class="formula-detail-card">
-              <!-- Top: Formula Use / Application -->
               <div class="formula-usage-box">
                 <span class="box-label">Usage &amp; Application</span>
                 <p id="formulaUsage" class="formula-usage-text"></p>
               </div>
 
-              <!-- Split Container: Left = LaTeX Formula, Right = Variables & Constants -->
               <div class="formula-display-grid">
-                <!-- Left Box: Rendered Formula -->
                 <div class="formula-latex-box">
                   <span class="box-label">Formula</span>
                   <div id="formulaLatex" class="latex-render"></div>
                 </div>
 
-                <!-- Right Box: Variable & Constant Descriptions -->
                 <div class="formula-variables-box">
                   <span class="box-label">Variables &amp; Constants</span>
                   <ul id="formulaVariables" class="variables-list"></ul>
@@ -294,7 +347,6 @@
           </div>
         </section>
 
-        <!-- Results Section - Separate Section -->
         <section id="results" class="main__task-div reference-card results-card">
           <h2 class="task-title">Results</h2>
           <div class="reference-content">
@@ -323,10 +375,60 @@
       </div>
     </main>
   </div>
-  <div id="helpOverlay" class="help-overlay" hidden aria-hidden="true">
-    <div id="helpPopover" class="help-popover" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-      <p class="help-step" id="helpStep">Guide</p><h3 id="helpTitle">Simulation guide</h3><p id="helpText"></p>
-      <div class="help-actions"><button id="closeHelpButton" class="control-button">Close</button><button id="nextHelpButton" class="control-button primary">Next</button></div>
+  <!-- EXPANDED OPERATING GUIDE & FAQ MODAL WINDOW -->
+  <div id="helpOverlay" class="help-overlay faq-modal-overlay" hidden aria-hidden="true">
+    <div id="helpPopover" class="help-popover faq-modal-container" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      
+      <!-- Modal Header -->
+      <header class="faq-modal-header">
+        <div class="header-text">
+          <h2 id="helpTitle" class="faq-modal-title">Faraday’s & Lenz’s Law Virtual Lab — Procedure & Operating Guide</h2>
+          <p class="faq-modal-subtitle">Select a topic from the left sidebar to view detailed operating procedures</p>
+        </div>
+        <button id="closeHelpButton" class="control-button faq-close-btn" aria-label="Close guide">&times;</button>
+      </header>
+
+      <!-- Modal Body Grid Layout -->
+      <div class="faq-modal-body">
+        
+        <!-- Left Sidebar: Question Selection List -->
+        <nav class="faq-question-sidebar" aria-label="Guide Questions">
+          <ul id="faqQuestionList" class="faq-question-list">
+            <li class="faq-q-item is-active" data-question="voltmeter">
+              <span class="q-number">1</span>
+              <span class="q-title">How to Use Voltmeter</span>
+            </li>
+            <li class="faq-q-item" data-question="simulation">
+              <span class="q-number">2</span>
+              <span class="q-title">How Simulation section works</span>
+            </li>
+            <li class="faq-q-item" data-question="graph">
+              <span class="q-number">3</span>
+              <span class="q-title">How Graph section works</span>
+            </li>
+            <li class="faq-q-item" data-question="observation">
+              <span class="q-number">4</span>
+              <span class="q-title">How Observation data is collected</span>
+            </li>
+            <li class="faq-q-item" data-question="results">
+              <span class="q-number">5</span>
+              <span class="q-title">How Results are calculated</span>
+            </li>
+            <li class="faq-q-item" data-question="calculation">
+              <span class="q-number">6</span>
+              <span class="q-title">How Calculation section works</span>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Viewport: Dynamic Step-by-Step Procedure Display -->
+        <main class="faq-procedure-viewport">
+          <article id="faqProcedureContent" class="faq-procedure-card">
+            <!-- Dynamic step-by-step procedures injected via JS -->
+          </article>
+        </main>
+
+      </div>
     </div>
   </div>
 </body>

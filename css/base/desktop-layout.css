@@ -1,11 +1,25 @@
 /* ==========================================================================
-   Desktop Layout & Page Architecture
+   Desktop Layout & Page Architecture (Simulation + Footer Only)
    ========================================================================== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 
 /* --------------------------------------------------------------------------
    1. Header Section
    -------------------------------------------------------------------------- */
 .title-div-container {
+  width: 100%;
   padding: 0.5rem;
   background: var(--clr-container-clr);
 }
@@ -56,6 +70,8 @@
 .container {
   display: flex;
   gap: 0.5rem;
+  width: 100%;
+  min-height: calc(100vh - 13rem);
   padding: 0 0.5rem 0.5rem;
   background: var(--clr-container-clr);
 }
@@ -63,13 +79,17 @@
 .main {
   flex: 1;
   min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-section {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   gap: 0.5rem;
-  align-items: start;
+  width: 100%;
 }
 
 /* --------------------------------------------------------------------------
@@ -81,6 +101,7 @@
   align-self: flex-start;
   display: flex;
   align-items: center;
+  height: calc(100vh - 14rem);
   max-height: calc(100vh - 1rem);
   padding: 1rem 0.8rem;
   background: #fffcfc;
@@ -178,38 +199,49 @@
 .icon-observation::before { background-image: url('../../images/observation.svg'); }
 
 /* --------------------------------------------------------------------------
-   4. Cards & Content Containers
+   4. Hide Secondary Windows & Expand Simulation Card
    -------------------------------------------------------------------------- */
+
+/* Hide everything except the simulation card and footer */
+.main-section > *:not(.simulation-card):not(.footer) {
+  display: none !important;
+}
+
+.simulation-card {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: calc(100vh - 15rem);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
 .main__task-div {
   display: flex;
   flex-direction: column;
-  height: fit-content;
-  overflow: hidden;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 0.9rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Inner Scrollable Wrapper Boundaries */
-.main__task-div > .table-wrapper,
-.main__task-div > .card-content,
-.main__task-div > table {
-  width: 100%;
-  max-height: 25rem;
-  overflow: auto;
-}
-
-/* Full Width Grid Spans */
-.simulation-card,
-.graphs-card,
-.footer {
-  grid-column: 1 / -1;
-}
-
 /* Apparatus Container Positioning Base */
 .apparatus-wrap {
   position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-wrap canvas,
+.apparatus-wrap .three-viewport {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Fullscreen Viewport Mode Constraints */
@@ -229,16 +261,160 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. Footer Section
+   5. Footer Section (Retained)
    -------------------------------------------------------------------------- */
 .footer {
-  padding: 0.5rem;
+  display: block !important;
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 0.6rem;
   color: #ffffff;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  border-radius: 0.5rem;
   background-image: linear-gradient(
     to bottom,
     var(--clr-side-background3),
     var(--clr-side-background2)
   );
+}
+
+/* --------------------------------------------------------------------------
+   6. Responsive Layout Fixes for Simulation Stage
+   -------------------------------------------------------------------------- */
+@media screen and (min-width: 769px) {
+  /* Make the lab stage flexible so it fills the parent instead of stretching with sidepanel content */
+  .simulation-card .lab-stage {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden; /* Constrains height strictly to the flex layout */
+  }
+
+  /* Make the workspace viewport fully responsive to fill the lab stage vertically */
+  .simulation-card #workspaceViewport {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Allow the side panel to safely scroll vertically without dictating layout height */
+  .simulation-card .experiment-sidepanel {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. Procedure / How-To-Use Popup Modal Overlay (Enlarged Window)
+   -------------------------------------------------------------------------- */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 35, 35, 0.6);
+  backdrop-filter: blur(5px);
+  padding: 1.5rem;
+  animation: help-fade-in 0.2s ease-out;
+}
+
+.help-overlay[hidden] {
+  display: none !important;
+}
+
+.help-popover {
+  position: relative;
+  z-index: 1001;
+  width: min(48rem, calc(100vw - 3rem)); /* Expanded maximum width */
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2.2rem 2.5rem; /* Expanded internal padding */
+  border: 2px solid #089b93;
+  border-radius: 1.2rem;
+  background: #ffffff;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.35);
+  overflow-y: auto;
+  animation: help-pop-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.help-step {
+  display: inline-block;
+  color: #087d76;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.help-popover h3 {
+  margin: 0;
+  color: #1a4d4a;
+  font-size: 1.65rem;
+  line-height: 1.35;
+}
+
+.help-popover p {
+  margin: 0;
+  color: #3b4d4c;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.help-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.help-btn {
+  padding: 0.65rem 1.5rem;
+  border: 1px solid #089b93;
+  border-radius: 0.6rem;
+  background: #089b93;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.help-btn:hover {
+  background: #056e68;
+  transform: translateY(-1px);
+}
+
+.help-btn-secondary {
+  border: 1px solid #089b93;
+  background: transparent;
+  color: #087d76;
+}
+
+.help-btn-secondary:hover {
+  background: #f0f7f7;
+  color: #056e68;
+}
+
+@keyframes help-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes help-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
