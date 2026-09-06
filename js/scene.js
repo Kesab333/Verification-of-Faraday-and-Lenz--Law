@@ -7,7 +7,7 @@ import { createFieldLines, updateFieldLines, setFieldVisibility, updatePoles } f
 import { buildVoltmeter, drawMeter } from './voltmeter.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-const SAFE_ANGLE = 25 * Math.PI / 180; // 0.4363 radians
+const SAFE_ANGLE = 25 * Math.PI / 180;
 
 export class InductionScene {
   constructor(host, onManualAngle) {
@@ -23,13 +23,11 @@ export class InductionScene {
     this.currentTheta = 0;
     this.manualMode = false;
 
-    // Ensure host element supports absolute positioning for info overlay
     if (getComputedStyle(this.host).position === 'static') {
       this.host.style.position = 'relative';
     }
 
     this.scene = new THREE.Scene();
-    // Set background color to pure white
     this.scene.background = new THREE.Color(0xffffff);
     this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
     this.camera.position.set(0, 2.5, 8.0);
@@ -71,21 +69,17 @@ export class InductionScene {
     this.digitalInactiveMat = voltmeter.digitalInactiveMat;
     this.clickables.push(...voltmeter.clickables);
     
-    // Set initial mode explicitly to DIGITAL and sync button visuals
     this.displayMode = 'DIGITAL';
     this.meterOn = voltmeter.meterOn;
 
     if (this.analogButton && this.digitalButton) {
-      this.analogButton.position.y = 0.345; // Unpressed
-      this.digitalButton.position.y = 0.32;  // Pressed
+      this.analogButton.position.y = 0.345;
+      this.digitalButton.position.y = 0.32;
       this.analogButton.material = this.analogButton.userData?.inactiveMat || this.analogInactiveMat;
       this.digitalButton.material = this.digitalButton.userData?.activeMat || this.digitalActiveMat;
     }
 
-    // Set initial Power switch visual (Red when ON, Green when OFF)
     this.updatePowerButtonVisuals();
-
-    // Add overlay info text with matching button colors
     this.addInfoOverlay();
 
     createFieldLines(this.pendulumMagnet);
@@ -122,7 +116,6 @@ export class InductionScene {
     this.scene.add(light3);
   }
 
-  // Helper method to create 3D text sprites
   createButtonLabel(text, colorStr = '#3b82f6') {
     const canvas = document.createElement('canvas');
     canvas.width = 128;
@@ -159,7 +152,6 @@ export class InductionScene {
     return sprite;
   }
 
-  // Info text box showing button locations with matching button colors
   addInfoOverlay() {
     const infoDiv = document.createElement('div');
     infoDiv.style.position = 'absolute';
@@ -184,9 +176,9 @@ export class InductionScene {
 
   updateInfoOverlayText() {
     if (!this.infoOverlay) return;
-    const powerColor = this.meterOn ? '#dc2626' : '#16a34a'; // Red when ON, Green when OFF
+    const powerColor = this.meterOn ? '#dc2626' : '#16a34a';
     const powerStateText = this.meterOn ? 'ON (Red)' : 'OFF (Green)';
-    const modeColor = '#2563eb'; // Blue for mode buttons
+    const modeColor = '#2563eb';
 
     this.infoOverlay.innerHTML = `
       <div style="font-weight: 600; margin-bottom: 4px; color: #1e293b;">Voltmeter Controls Guide</div>
@@ -201,23 +193,21 @@ export class InductionScene {
     `;
   }
 
-  // Power Switch visuals (Red when ON, Green when OFF)
   updatePowerButtonVisuals() {
     if (!this.powerBtnMat) return;
     if (this.meterOn) {
-      this.powerBtnMat.color.setHex(0xff0000); // RED when ON
+      this.powerBtnMat.color.setHex(0xff0000);
       this.powerBtnMat.emissive.setHex(0xff0000);
       this.powerBtnMat.emissiveIntensity = 0.8;
       if (this.powerButton) this.powerButton.position.x = 0.59;
     } else {
-      this.powerBtnMat.color.setHex(0x00cc00); // GREEN when OFF
+      this.powerBtnMat.color.setHex(0x00cc00);
       this.powerBtnMat.emissive.setHex(0x003300);
       this.powerBtnMat.emissiveIntensity = 0.3;
       if (this.powerButton) this.powerButton.position.x = 0.575;
     }
   }
 
-  // ---- Drag cleanup helper ----
   resetDragState() {
     this.drag = null;
     this.isPointerDown = false;
@@ -225,7 +215,6 @@ export class InductionScene {
     if (this.controls) this.controls.enabled = true;
   }
 
-  // ---- Set angle programmatically (clamped) ----
   setAngle(rad) {
     this.currentTheta = clamp(rad, -SAFE_ANGLE, SAFE_ANGLE);
     if (this.frameGroup) {

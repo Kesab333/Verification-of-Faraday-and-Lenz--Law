@@ -15,6 +15,7 @@
 @import './components/graphs.css';
 @import './components/reference.css';
 @import './components/workspace.css';
+@import './components/dashboard.css';
 
 /* ---- Utilities & Overlays ---- */
 @import './utilities/help.css';

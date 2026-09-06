@@ -12,6 +12,7 @@ import { observation } from './observation.js';
 import { applyPreset } from './presets.js';
 import { initHelp } from './help.js';
 import { initFormulaModule } from './formula.js';
+import { initDashboard } from './dashboard.js';
 
 const PX_PROV_F15 = "c3ab";
 
@@ -156,7 +157,6 @@ function processManualPeakDetection(dt) {
 export function setParameter(name, value) {
   let safeValue = value;
 
-  // Clamp value if min/max limits exist for this parameter
   if (PARAM_LIMITS[name]) {
     safeValue = clamp(value, PARAM_LIMITS[name].min, PARAM_LIMITS[name].max);
   }
@@ -167,17 +167,14 @@ export function setParameter(name, value) {
     scene.setCoilTurns(safeValue);
   }
 
-  // 1. Update slider input value
   if (controlsByName[name] && controlsByName[name].input) {
     controlsByName[name].input.value = safeValue;
   }
 
-  // 2. Synchronize Direct Value Number Input Box
   if (controlsByName[name] && controlsByName[name].numberInput) {
     controlsByName[name].numberInput.value = safeValue;
   }
 
-  // 3. Optional text readout update
   if (controlsByName[name] && controlsByName[name].output) {
     controlsByName[name].output.textContent = controlsByName[name].format(safeValue);
   }
@@ -197,7 +194,6 @@ export function setParameter(name, value) {
       const omega = (targetRad - lastManualTheta) / dt;
       model.setManualAngle(targetRad, omega);
       
-      // Fix: Directly sync model state in manual mode
       if (model.state) {
         model.state.theta = targetRad;
         model.state.angleDegrees = safeValue;
@@ -225,31 +221,26 @@ export function setParameter(name, value) {
 }
 
 // ============================================================
-//  UPDATED CONTROL BINDING: With Clamping on Change/Blur
+//  UPDATED CONTROL BINDING
 // ============================================================
 controls.forEach((c) => {
-  // Slider input event (real-time, already clamped via setParameter)
   if (c.input) {
     c.input.addEventListener('input', () => setParameter(c.name, Number(c.input.value)));
   }
 
   if (c.numberInput) {
-    // While typing, update live without forcing bounds mid-keystroke
     c.numberInput.addEventListener('input', () => {
       const rawVal = Number(c.numberInput.value);
       if (!isNaN(rawVal) && c.numberInput.value !== '') {
-        // Apply bounds immediately for real-time feedback
         const clampedVal = PARAM_LIMITS[c.name] 
           ? clamp(rawVal, PARAM_LIMITS[c.name].min, PARAM_LIMITS[c.name].max)
           : rawVal;
         
         model.setParameter(c.name, clampedVal);
         if (c.input) c.input.value = clampedVal;
-        // Update the number input to show the clamped value
         c.numberInput.value = clampedVal;
         if (c.output) c.output.textContent = c.format(clampedVal);
         
-        // Handle angle-specific logic
         if (c.name === 'angle') {
           const targetRad = (clampedVal * Math.PI) / 180;
           const now = performance.now();
@@ -264,7 +255,6 @@ controls.forEach((c) => {
             const omega = (targetRad - lastManualTheta) / dt;
             model.setManualAngle(targetRad, omega);
             
-            // Fix: Explicitly assign theta and angleDegrees on state
             if (model.state) {
               model.state.theta = targetRad;
               model.state.angleDegrees = clampedVal;
@@ -290,16 +280,12 @@ controls.forEach((c) => {
       }
     });
 
-    // Enforce min/max clamping when user exits the input box or submits (presses Enter)
     const commitValue = () => {
       let val = Number(c.numberInput.value);
-      
-      // Fallback to min if empty or invalid entry
       if (isNaN(val) || c.numberInput.value.trim() === '') {
         val = PARAM_LIMITS[c.name]?.min ?? 0;
       }
-      
-      setParameter(c.name, val); // setParameter automatically clamps and updates input text
+      setParameter(c.name, val);
     };
 
     c.numberInput.addEventListener('change', commitValue);
@@ -308,10 +294,9 @@ controls.forEach((c) => {
 });
 
 // ============================================================
-//  UPDATED setMode: Force pause and clear drag references
+//  UPDATED setMode
 // ============================================================
 export function setMode(mode) {
-  // 1. Force stop active simulation running state
   if (typeof model.pause === 'function') {
     model.pause();
   } else if (model.state) {
@@ -319,7 +304,6 @@ export function setMode(mode) {
     model.state.running = false;
   }
 
-  // 2. Reset 3D scene drag interaction
   if (scene) {
     scene.drag = null;
     scene.isPointerDown = false;
@@ -407,7 +391,6 @@ function sync(state) {
   const emfSign = emfVal >= 0 ? '+' : '';
   const formattedEmf = `${emfSign}${emfVal.toFixed(3)} V`;
 
-  // Voltmeter Displays
   const voltmeterEl = elements.voltmeter || $('#voltmeter');
   if (voltmeterEl) {
     if ('value' in voltmeterEl && voltmeterEl.tagName === 'INPUT') voltmeterEl.value = formattedEmf;
@@ -417,13 +400,11 @@ function sync(state) {
   const voltmeterHUD = $('.voltmeter-hud') || $('.voltmeter-readout');
   if (voltmeterHUD) voltmeterHUD.textContent = formattedEmf;
 
-  // 1. Angle
   const angleEl = elements.angle || $('#angleValue') || $('#angle') || $('#angleDegrees');
   if (angleEl) {
     angleEl.textContent = mode === 'freefall' ? '—' : `${(state.angleDegrees ?? 0).toFixed(1)}°`;
   }
 
-  // 2. Velocity / Speed Label
   const velValEl = elements.velocity || $('#velocityValue') || $('#velocity') || $('#angularVelocityValue');
   const velLabelEl = elements.velocityLabel || $('#velocityLabel') || $('#angularVelocityLabel');
 
@@ -438,7 +419,6 @@ function sync(state) {
     }
   }
 
-  // 3. Velocity Value
   const activeVelVal = elements.velocity || $('#velocityValue') || $('#velocity') || $('#angularVelocityValue');
   if (activeVelVal) {
     const rawVel = state.velocity ?? state.omega ?? 0;
@@ -447,39 +427,33 @@ function sync(state) {
       : `${rawVel.toFixed(3)} rad/s`;
   }
 
-  // 4. Flux
   const fluxEl = elements.flux || $('#fluxValue') || $('#flux');
   if (fluxEl) {
     fluxEl.textContent = `${(state.fluxMilliWebers ?? 0).toFixed(3)} mWb`;
   }
 
-  // 5. EMF
   const emfEl = elements.emf || $('#emfValue') || $('#emf');
   if (emfEl) {
     if ('value' in emfEl && emfEl.tagName === 'INPUT') emfEl.value = formattedEmf;
     emfEl.textContent = formattedEmf;
   }
 
-  // 6. Magnetic Field
   const fieldEl = elements.field || $('#fieldValue') || $('#field');
   if (fieldEl) {
     fieldEl.textContent = `${(state.fieldMilliTesla ?? 0).toFixed(1)} mT`;
   }
 
-  // 7. Induced Current
   const currentEl = elements.current || $('#currentValue') || $('#current');
   if (currentEl) {
     const currVal = state.currentMilliAmps ?? 0;
     currentEl.textContent = `${currVal >= 0 ? '+' : ''}${currVal.toFixed(4)} mA`;
   }
 
-  // 8. Oscillations Count
   const countEl = elements.count || $('#countValue') || $('#count') || $('#oscillations');
   if (countEl) {
     countEl.textContent = mode === 'freefall' ? '—' : (state.oscillations ?? 0);
   }
 
-  // 9. Motion Direction
   const motionEl = elements.motion || $('#motionValue') || $('#motion');
   if (motionEl) {
     const rawVel = state.velocity ?? state.omega ?? 0;
@@ -494,7 +468,6 @@ function sync(state) {
       : 'Stationary';
   }
 
-  // 10. Status & Heat
   const statusEl = elements.status || $('#experimentStatus') || $('#status');
   if (statusEl) {
     statusEl.textContent = state.complete 
@@ -522,13 +495,11 @@ function sync(state) {
     heatFillEl.style.width = `${Math.min((state.electricalEnergy || 0) * 700000, 100)}%`;
   }
 
-  // Observation Text
   const obsTextEl = elements.observation || $('#observationText');
   if (obsTextEl) {
     obsTextEl.textContent = observation(state);
   }
 
-  // EMF Table Readings
   const readingsTableTarget = elements.readings || $('#emfReadings') || $('#readingsTable');
   if (readingsTableTarget) {
     const readings = state.readings || [];
@@ -585,9 +556,6 @@ function sync(state) {
 function release() { model.release(); sync(model.state); }
 function toggle() { model.running ? model.pause() : model.release(); sync(model.state); }
 
-// ============================================================
-//  UPDATED reset: Clear drag state and pause simulation
-// ============================================================
 function reset() {
   if (typeof model.pause === 'function') model.pause();
   model.reset();
@@ -620,6 +588,27 @@ initHelp();
 initFormulaModule();
 initGraphsModule(emfGraph, angleGraph);
 
+// ---- Dashboard Initialization ----
+const dashboard = initDashboard({
+  onSelectSection(workspaceId) {
+    // Delegate to the workspace system to show the correct section
+    if (workspaceContext) {
+      // We need to call selectWorkspace which is internal to initWorkspace.
+      // Trigger the sidebar link click to reuse existing logic.
+      const link = document.querySelector(`.workspace-link[data-workspace="${workspaceId}"]`);
+      if (link) link.click();
+
+      workspaceContext.updateWorkspaceVisibility(workspaceId);
+      workspaceContext.refreshControlState();
+    }
+    // Resize scene since layout changed
+    requestAnimationFrame(() => { scene.resize(); sync(model.state); });
+  },
+  onReturnHome() {
+    // Nothing extra needed — CSS hides sidebar/main via body.dashboard-active
+  }
+});
+
 if (typeof window.ResizeObserver !== 'undefined') {
   const resizeObserver = new ResizeObserver(() => {
     if (model && model.state) {
@@ -641,7 +630,6 @@ function animate(now) {
   const mode = model.parameters?.mode || model.state?.parameters?.mode;
 
   if (mode === 'manual') {
-    // Increment model time during manual dragging so recorded peaks have accurate timestamps
     model.time = (model.time || 0) + dt;
     if (model.state) model.state.time = model.time;
 

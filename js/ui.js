@@ -28,9 +28,6 @@ export const elements = {
   voltmeter: $('#voltmeter')
 };
 
-// ============================================================
-//  UPDATED CONTROLS ARRAY: Range + Number Input Binding
-// ============================================================
 export const controls = [
   {
     name: 'angle',
@@ -78,7 +75,6 @@ if (controlsByName.angle && controlsByName.angle.input) {
   if (controlsByName.angle.output) controlsByName.angle.output.textContent = '22°';
 }
 
-// ---- Contextual Sidebar Manager ----
 export function updateContextualSidebar(name, model) {
   const sidebar = $('.experiment-sidepanel') || $('#controlsCard') || $('.controls-sidebar') || $('aside');
   if (!sidebar) return;
@@ -90,10 +86,13 @@ export function updateContextualSidebar(name, model) {
     sidebar.appendChild(infoContainer);
   }
 
-  // Controls are only visible for Simulation and Graphs tabs
   const isInteractiveTab = name === 'simulation' || name === 'graphs';
 
-  // Hide Mode, Controls, Presets, and Results when on non-interactive tabs
+  // Skip redundant DOM writes for interactive tabs (called every frame via sync)
+  if (isInteractiveTab && sidebar.dataset.sidebarMode === 'interactive') {
+    return;
+  }
+
   Array.from(sidebar.children).forEach((child) => {
     if (child !== infoContainer) {
       if (isInteractiveTab) {
@@ -105,10 +104,10 @@ export function updateContextualSidebar(name, model) {
   });
 
   infoContainer.style.display = isInteractiveTab ? 'none' : 'block';
+  sidebar.dataset.sidebarMode = isInteractiveTab ? 'interactive' : 'contextual';
 
   if (isInteractiveTab) return;
 
-  // Prevent re-rendering and resetting collapsed state if tab/mode hasn't changed
   if (infoContainer.dataset.activeMode === name && name !== 'calculation' && name !== 'results') {
     return;
   }
@@ -347,48 +346,44 @@ export function initWorkspace(model, scene, syncCallback, emfGraph, angleGraph) 
   }
 
   function updateWorkspaceVisibility(name) {
-  const isInteractiveTab = name === 'simulation' || name === 'graphs';
+    const isInteractiveTab = name === 'simulation' || name === 'graphs';
 
-  // 1. Target Toolbar Action Containers
-  const toolbarContainers = document.querySelectorAll(
-    '.simulation-toolbar, .sim-action-bar, .workspace-toolbar, .card-toolbar, .control-bar, .simulation-header, .card-sub-header, .action-bar, .toolbar, .workspace-controls-header, .workspace-controls'
-  );
-  toolbarContainers.forEach((container) => {
-    container.style.display = isInteractiveTab ? '' : 'none';
-  });
+    const toolbarContainers = document.querySelectorAll(
+      '.simulation-toolbar, .sim-action-bar, .workspace-toolbar, .card-toolbar, .control-bar, .simulation-header, .card-sub-header, .action-bar, .toolbar, .workspace-controls-header, .workspace-controls'
+    );
+    toolbarContainers.forEach((container) => {
+      container.style.display = isInteractiveTab ? '' : 'none';
+    });
 
-  // 2. Target Specific Elements (Status, Release, Pause, Reset)
-  // NOTE: Help button selectors removed from this list so Help remains visible everywhere
-  const targets = [
-    elements.release,
-    elements.pause,
-    elements.reset,
-    elements.status,
-    elements.dot,
-    $('#experimentStatus'),
-    $('#statusDot'),
-    $('#releaseButton'),
-    $('#pauseButton'),
-    $('#resetButton'),
-    $('.status-chip'),
-    $('.button-group'),
-    $('.control-buttons-row')
-  ];
+    const targets = [
+      elements.release,
+      elements.pause,
+      elements.reset,
+      elements.status,
+      elements.dot,
+      $('#experimentStatus'),
+      $('#statusDot'),
+      $('#releaseButton'),
+      $('#pauseButton'),
+      $('#resetButton'),
+      $('.status-chip'),
+      $('.button-group'),
+      $('.control-buttons-row')
+    ];
 
-  targets.forEach((el) => {
-    if (el) {
-      el.style.display = isInteractiveTab ? '' : 'none';
-    }
-  });
+    targets.forEach((el) => {
+      if (el) {
+        el.style.display = isInteractiveTab ? '' : 'none';
+      }
+    });
 
-  // Ensure Help elements explicitly remain visible regardless of the active tab
-  const helpElements = document.querySelectorAll('#helpButton, .help-button, .help-btn, .help-icon');
-  helpElements.forEach((el) => {
-    el.style.display = '';
-  });
+    const helpElements = document.querySelectorAll('#helpButton, .help-button, .help-btn, .help-icon');
+    helpElements.forEach((el) => {
+      el.style.display = '';
+    });
 
-  updateContextualSidebar(name, model);
-}
+    updateContextualSidebar(name, model);
+  }
 
   function selectWorkspace(name) {
     const next = workspaceSections[name];
@@ -421,10 +416,33 @@ export function initWorkspace(model, scene, syncCallback, emfGraph, angleGraph) 
     requestAnimationFrame(() => { scene.resize(); if (syncCallback) syncCallback(model.state); });
   }
 
-  document.querySelectorAll('.workspace-link').forEach((link) => link.addEventListener('click', () => selectWorkspace(link.dataset.workspace)));
+  document.querySelectorAll('.workspace-link').forEach((link) => link.addEventListener('click', () => {
+    // Dismiss dashboard if active
+    document.body.classList.remove('dashboard-active');
+    const closeBtn = document.getElementById('dashboardCloseBtn');
+    if (closeBtn) closeBtn.style.display = 'inline-flex';
+    selectWorkspace(link.dataset.workspace);
+  }));
 
-  // Perform initial visibility check
   updateWorkspaceVisibility(workspaceMode);
+
+  // ---- Accordion: Only one side-details panel open at a time ----
+  // Applies to both Simulation and Graphs views (shared sidebar)
+  const controlsCard = document.getElementById('controlsCard');
+  const variablesCard = document.getElementById('variablesCard');
+
+  if (controlsCard && variablesCard) {
+    controlsCard.addEventListener('toggle', () => {
+      if (controlsCard.open && variablesCard.open) {
+        variablesCard.open = false;
+      }
+    });
+    variablesCard.addEventListener('toggle', () => {
+      if (variablesCard.open && controlsCard.open) {
+        controlsCard.open = false;
+      }
+    });
+  }
 
   return { refreshControlState, updateWorkspaceVisibility, getWorkspaceMode: () => workspaceMode };
 }

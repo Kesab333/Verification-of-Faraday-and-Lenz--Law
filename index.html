@@ -67,11 +67,15 @@
     </nav>
 
     <main class="main">
+      <!-- Dashboard Card Grid (first screen) -->
+      <div id="dashboardView"></div>
+
       <div class="main-section">
         <section id="simulation" class="main__task-div simulation-card">
           <div class="task-heading"><h2 id="workspaceTitle" class="task-title">Simulation</h2><div class="heading-actions">
             <button id="helpButton" class="heading-button help-button" aria-label="Open simulation help">?</button>
             <button id="fullscreenButton" class="heading-button" aria-label="View website fullscreen" title="Fullscreen">⛶</button>
+            <button id="dashboardCloseBtn" aria-label="Back to Dashboard" title="Back to Dashboard"><span class="close-icon">✕</span> Close</button>
           </div></div>
           
           <div class="simulation-toolbar">
@@ -140,7 +144,7 @@
               </details>
 
               <!-- CARD 2: VARIABLES -->
-              <details id="variablesCard" class="side-details" open>
+              <details id="variablesCard" class="side-details">
                 <summary><span>Variables</span></summary>
                 <div class="card-body">
                   <div class="variables-sections">

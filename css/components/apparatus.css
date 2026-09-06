@@ -155,7 +155,9 @@
 .lab-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 28rem;
+  grid-template-rows: 1fr;
   min-height: 44rem;
+  max-height: calc(100vh - 16rem);
   background: #ffffff;
 }
 
@@ -174,6 +176,7 @@
   padding: 1rem;
   border-left: 1px solid #d2e1e0;
   background: #ffffff;
+  align-self: stretch;
 }
 
 .side-details {

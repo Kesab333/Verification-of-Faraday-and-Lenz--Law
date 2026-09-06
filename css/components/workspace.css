@@ -91,9 +91,9 @@
 .simulation-card.is-reference-mode .simulation-toolbar,
 .simulation-card.is-reference-mode .experiment-sidepanel { opacity: 1; }
 
-.simulation-card.is-reference-mode button:disabled,
-.simulation-card.is-reference-mode input:disabled,
-.simulation-card.is-reference-mode summary { cursor: not-allowed; }
+.simulation-card.is-reference-mode:not(.is-graph-mode) button:disabled,
+.simulation-card.is-reference-mode:not(.is-graph-mode) input:disabled,
+.simulation-card.is-reference-mode:not(.is-graph-mode) summary { cursor: not-allowed; }
 
 .simulation-card.is-reference-mode:not(.is-graph-mode) .simulation-toolbar,
 .simulation-card.is-reference-mode:not(.is-graph-mode) .experiment-sidepanel { opacity: .62; }
