@@ -38,10 +38,10 @@ Open `http://localhost:8000` in the browser. The page loads KaTeX, fonts, and Th
 
 ## Developer and attribution
 
-- **Developer/maintainer:** SOLVE Virtual Lab team
+- **Developer/maintainer:** Yash Vardhan Jha
 - **Institution:** National Institute of Technology Karnataka (NITK), Surathkal
 - **Project:** SOLVE Virtual Lab
-- **Contact:** No individual contact details are defined in this distribution. Please use the official NITK/SOLVE project channel when publishing or adapting this work.
+- **Contact:** yashvardhanjha321@gmail.com or Please use the official NITK/SOLVE project channel when publishing or adapting this work.
 
 The educational model is a teaching approximation and should not be treated as a calibration certificate for physical laboratory equipment.
 
