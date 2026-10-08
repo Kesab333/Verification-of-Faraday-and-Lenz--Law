@@ -9,7 +9,26 @@ import {
 } from './ui.js';
 import { drawGraph, initGraphsModule } from './graphs.js';
 import { observation } from './observation.js';
-import { applyPreset } from './presets.js';
+const PX_PROV_F10 = "2594";
+
+function applyPreset(name, setMode, setParameter, model, syncCallback) {
+  const presetDefinitions = {
+    entering: () => { setMode('oscillate'); setParameter('angle', -22); },
+    leaving: () => { setMode('oscillate'); setParameter('angle', 3); },
+    strong: () => setParameter('strength', 1.5),
+    weak: () => setParameter('strength', 0.5),
+    fast: () => { setMode('oscillate'); setParameter('angle', 25); },
+    slow: () => { setMode('oscillate'); setParameter('angle', 5); },
+    manyTurns: () => setParameter('turns', 500),
+    fewTurns: () => setParameter('turns', 100),
+    reverse: () => { model.reversePoles(); if (syncCallback) syncCallback(model.state); }
+  };
+
+  if (presetDefinitions[name]) {
+    presetDefinitions[name]();
+    if (syncCallback) syncCallback(model.state);
+  }
+}
 import { initHelp } from './help.js';
 import { initFormulaModule } from './formula.js';
 import { initDashboard } from './dashboard.js';
@@ -544,8 +563,8 @@ function sync(state) {
 
   if (!state.history) state.history = [];
 
-  drawGraph(emfGraph, '#168983', state.history, (point) => point?.emf ?? 0, -0.8, 0.8);
-  drawGraph(angleGraph, '#b36d24', state.history, (point) => point?.angle ?? 0, -25, 25);
+  if (emfGraph.getClientRects().length) drawGraph(emfGraph, '#168983', state.history, (point) => point?.emf ?? 0, -0.8, 0.8);
+  if (angleGraph.getClientRects().length) drawGraph(angleGraph, '#b36d24', state.history, (point) => point?.angle ?? 0, -25, 25);
 
   if (workspaceContext && typeof updateContextualSidebar === 'function') {
     updateContextualSidebar(workspaceContext.getWorkspaceMode(), model);
@@ -605,7 +624,7 @@ const dashboard = initDashboard({
     requestAnimationFrame(() => { scene.resize(); sync(model.state); });
   },
   onReturnHome() {
-    // Nothing extra needed — CSS hides sidebar/main via body.dashboard-active
+    if (workspaceContext?.getWorkspaceMode() === 'simulation') scene.resetView();
   }
 });
 
@@ -622,6 +641,7 @@ if (typeof window.ResizeObserver !== 'undefined') {
 // ---- Main Loop ----
 window.addEventListener('resize', () => { scene.resize(); sync(model.state); });
 let last = performance.now();
+let lastUiUpdate = 0;
 
 function animate(now) {
   let dt = Math.min((now - last) / 1000, 0.1);
@@ -649,8 +669,13 @@ function animate(now) {
     }
   }
 
-  sync(model.state);
-  if (workspaceContext) workspaceContext.refreshControlState();
+  if (now - lastUiUpdate >= 50) {
+    sync(model.state);
+    if (workspaceContext) workspaceContext.refreshControlState();
+    lastUiUpdate = now;
+  } else {
+    scene.update(model.state);
+  }
   requestAnimationFrame(animate);
 }
 
@@ -662,3 +687,7 @@ if (workspaceContext) {
 }
 sync(model.state);
 requestAnimationFrame(animate);
+export function getSimulationDiagnostics() {
+  return { camera: scene.camera.position.toArray(), target: scene.controls.target.toArray(),
+    running: model.running, time: model.state.time, theta: model.state.theta };
+}

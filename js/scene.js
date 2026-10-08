@@ -2,9 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { DeviceDetector } from './utils.js';
-import { buildApparatus, setCoilTurns } from './apparatus.js';
 import { createFieldLines, updateFieldLines, setFieldVisibility, updatePoles } from './fieldLines.js';
-import { buildVoltmeter, drawMeter } from './voltmeter.js';
+import { buildApparatus, setCoilTurns, buildVoltmeter, drawMeter } from './apparatus.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const SAFE_ANGLE = 25 * Math.PI / 180;
@@ -101,6 +100,17 @@ export class InductionScene {
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(host);
     this.addInteraction();
+    this.resize();
+    this.controls.saveState();
+  }
+
+  resetView() {
+    this.resetDragState();
+    const damping = this.controls.enableDamping;
+    this.controls.enableDamping = false;
+    this.controls.update(); // Flush the pending orbit delta before restoring home.
+    this.controls.reset();
+    this.controls.enableDamping = damping;
     this.resize();
   }
 
@@ -339,6 +349,7 @@ export class InductionScene {
   }
 
   update(state) {
+    if (document.hidden || document.body.classList.contains('dashboard-active') || !this.host.getClientRects().length) return;
     const isFreefall = state.parameters.mode === 'freefall';
     this.manualMode = state.parameters.mode === 'manual';
     

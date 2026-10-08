@@ -1,30 +1,5 @@
 // observation.js
 
-// ---- Inject Accordion CSS Fixes ----
-export function initObservationStyles() {
-  const styleId = 'situational-observations-accordion-styles';
-  if (typeof document !== 'undefined' && !document.getElementById(styleId)) {
-    const style = document.createElement('style');
-    style.id = styleId;
-    style.textContent = `
-      details.situational-observations-accordion > summary {
-        list-style: none !important;
-      }
-      details.situational-observations-accordion > summary::-webkit-details-marker {
-        display: none !important;
-      }
-      details.situational-observations-accordion[open] summary span:last-child {
-        transform: rotate(180deg);
-        transition: transform 0.2s ease;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-}
-
-// Auto-inject styles when imported
-initObservationStyles();
-
 /**
  * Helper to extract formatted position string from state
  */

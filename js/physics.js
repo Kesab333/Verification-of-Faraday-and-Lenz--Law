@@ -89,8 +89,7 @@ export class InductionModel {
     this.parameters.angle = Math.round((theta * 180) / Math.PI);
     this.updateElectromagnetism();
     
-    // Increment time slightly during manual drag for oscilloscope display
-    this.time += 0.016;
+    // The application advances manual time once per frame.
     this.recordHistory();
   }
 
@@ -176,12 +175,15 @@ export class InductionModel {
     const gravity = 9.80665;
 
     if (this.parameters.mode === 'freefall') {
-      this.axialVelocity += gravity * scaledDt;
+      const brakingForce = -(this.parameters.turns ** 2 * this.fluxGradientValue ** 2 /
+        this.circuitResistance) * this.axialVelocity;
+      this.axialVelocity += (gravity + brakingForce / 0.075) * scaledDt;
       this.axialPosition += this.axialVelocity * scaledDt;
       this.theta = 0;
       this.omega = 0;
       if (this.axialPosition > 0.20) {
         this.axialPosition = 0.20;
+        this.axialVelocity = 0;
         this.running = false;
         this.complete = true;
       }

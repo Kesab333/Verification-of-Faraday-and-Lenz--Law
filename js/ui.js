@@ -389,6 +389,7 @@ export function initWorkspace(model, scene, syncCallback, emfGraph, angleGraph) 
     const next = workspaceSections[name];
     if (!next || name === workspaceMode) return;
 
+    if (workspaceMode === 'simulation') scene.resetView();
     workspaceSections[workspaceMode].classList.remove('is-active-workspace');
     sectionList.append(workspaceSections[workspaceMode]);
     if (next.tagName === 'DETAILS') next.open = true;

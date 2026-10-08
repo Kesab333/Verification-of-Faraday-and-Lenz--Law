@@ -198,6 +198,8 @@ export function updateStepByStepCalculation() {
 // ------------------------------------------------------------------
 // 4. Main Module Initializer
 // ------------------------------------------------------------------
+const initializedFormulaSelects = new WeakSet();
+
 export function initFormulaModule() {
   // A. Initialize Formula Dropdown Viewer
   const select = document.getElementById('formulaSelect');
@@ -230,7 +232,10 @@ export function initFormulaModule() {
       `).join('');
     }
 
-    select.addEventListener('change', (e) => updateFormulaView(e.target.value));
+    if (!initializedFormulaSelects.has(select)) {
+      select.addEventListener('change', (e) => updateFormulaView(e.target.value));
+      initializedFormulaSelects.add(select);
+    }
     updateFormulaView(select.value);
   }
 

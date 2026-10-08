@@ -1,4 +1,4 @@
-/* ==========================================================================
+/* base/desktop-layout.css — laboratory styles *//* ==========================================================================
    Desktop Layout & Page Architecture (Simulation + Footer Only)
    ========================================================================== */
 
@@ -178,25 +178,14 @@ html, body {
   color: #056e68;
 }
 
-.tool-spacer {
-  display: block;
-  width: 4.3rem;
-  height: 4.3rem;
-}
-
-.tool-icon {
-  display: none;
-}
-
 /* Sidebar Icon Assets */
-.icon-simulation::before  { background-image: url('../../images/simulation.svg'); }
-.icon-diagram::before     { background-image: url('../../images/diagram.svg'); }
-.icon-calculation::before { background-image: url('../../images/calculation.svg'); }
-.icon-formula::before     { background-image: url('../../images/formula.svg'); }
-.icon-results::before     { background-image: url('../../images/results.svg'); }
-.icon-graph::before       { background-image: url('../../images/graphbutton.svg'); }
-.icon-experiments::before { background-image: url('../../images/experiments.svg'); }
-.icon-observation::before { background-image: url('../../images/observation.svg'); }
+.icon-simulation::before  { background-image: url('../images/simulation.svg'); }
+.icon-diagram::before     { background-image: url('../images/diagram.svg'); }
+.icon-calculation::before { background-image: url('../images/calculation.svg'); }
+.icon-formula::before     { background-image: url('../images/formula.svg'); }
+.icon-results::before     { background-image: url('../images/results.svg'); }
+.icon-graph::before       { background-image: url('../images/graphbutton.svg'); }
+.icon-observation::before { background-image: url('../images/observation.svg'); }
 
 /* --------------------------------------------------------------------------
    4. Hide Secondary Windows & Expand Simulation Card
@@ -342,15 +331,6 @@ html, body {
   animation: help-pop-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.help-step {
-  display: inline-block;
-  color: #087d76;
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .help-popover h3 {
   margin: 0;
   color: #1a4d4a;
@@ -363,16 +343,6 @@ html, body {
   color: #3b4d4c;
   font-size: 1.1rem;
   line-height: 1.6;
-}
-
-.help-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1.2rem;
-  border-top: 1px solid #e2e8f0;
 }
 
 .help-btn {
@@ -390,17 +360,6 @@ html, body {
 .help-btn:hover {
   background: #056e68;
   transform: translateY(-1px);
-}
-
-.help-btn-secondary {
-  border: 1px solid #089b93;
-  background: transparent;
-  color: #087d76;
-}
-
-.help-btn-secondary:hover {
-  background: #f0f7f7;
-  color: #056e68;
 }
 
 @keyframes help-fade-in {

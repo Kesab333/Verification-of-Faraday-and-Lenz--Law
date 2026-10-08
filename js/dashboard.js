@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { buildApparatus, setCoilTurns } from './apparatus.js';
 import { createFieldLines, updateFieldLines, updatePoles } from './fieldLines.js';
-import { buildVoltmeter, drawMeter } from './voltmeter.js';
+import { buildApparatus, setCoilTurns, buildVoltmeter, drawMeter } from './apparatus.js';
 
 const DASHBOARD_SECTIONS = [
   { id: 'diagram', title: 'Diagram', iconSrc: './images/diagram.svg', workspace: 'diagram' },
@@ -120,7 +119,7 @@ function getCardPreviewHTML(sectionId) {
     case 'diagram':
       return `
         <div class="dash-diagram-bg">
-          <img src="images/Fig 1.png" alt="Circuit Diagram Preview" class="dash-diagram-img" />
+          <img src="images/Fig 1.webp" alt="Circuit Diagram Preview" class="dash-diagram-img" />
         </div>
       `;
 
@@ -498,10 +497,11 @@ function initSimulationMiniPreview() {
     if (rect.width > 0 && rect.height > 0) {
       camera.aspect = rect.width / rect.height;
       // Adjust camera distance to frame apparatus perfectly within the card
-      camera.fov = rect.aspect < 1 ? 38 : 32;
+      camera.fov = camera.aspect < 1 ? 38 : 32;
       camera.position.set(0, 2.7, 9.2);
       camera.updateProjectionMatrix();
-      renderer.setSize(rect.width, rect.height, false);
+      const size = renderer.getSize(new THREE.Vector2());
+      if (size.x !== rect.width || size.y !== rect.height) renderer.setSize(rect.width, rect.height, false);
     }
   }
 

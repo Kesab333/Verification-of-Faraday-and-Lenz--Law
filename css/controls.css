@@ -1,4 +1,4 @@
-:root {
+/* components/controls.css — laboratory styles */:root {
   --px-prov-f06: "50e8";
 }
 
@@ -44,11 +44,6 @@
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.var-number-input:focus {
-  border-color: #089b93;
-  box-shadow: 0 0 0 2px rgba(8, 155, 147, 0.2);
 }
 
 /* Remove default browser arrows/spinners on number inputs for a cleaner look */
@@ -164,12 +159,6 @@
   font-weight: 700;
 }
 
-.control-note {
-  padding: 0 1.6rem 1.6rem;
-  color: #627070;
-  font-size: 1.2rem;
-}
-
 /* ---- Side Details (Accordion) ---- */
 .side-details {
   overflow: hidden;
@@ -189,28 +178,6 @@
   cursor: pointer;
   font-size: 1.35rem;
   font-weight: 700;
-}
-
-.controls-lock {
-  padding: .25rem .55rem;
-  border: 1px solid #a9cecc;
-  border-radius: .35rem;
-  background: #fff;
-  color: #087d76;
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.controls-lock:hover {
-  background: #f0f7f6;
-}
-
-.controls-lock.is-locked {
-  border-color: #a86c28;
-  background: #fff5e8;
-  color: #8a581e;
 }
 
 .side-details[open] summary {
@@ -285,22 +252,6 @@
 }
 
 /* ---- Control Presets ---- */
-.control-presets {
-  padding: .85rem 1rem 0;
-}
-
-.control-presets > p {
-  margin-bottom: .5rem;
-  color: #087d76;
-  font-size: 1.12rem;
-  font-weight: 700;
-}
-
-.preset-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .45rem;
-}
 
 .preset-button {
   min-height: 2.7rem;
@@ -326,16 +277,6 @@
 }
 
 /* ---- Mode Controls ---- */
-.mode-controls {
-  padding: .85rem 1rem 0;
-}
-
-.mode-controls > p {
-  margin-bottom: .5rem;
-  color: #087d76;
-  font-size: 1.12rem;
-  font-weight: 700;
-}
 
 .mode-button-group {
   display: grid;
@@ -371,3 +312,210 @@
 .mode-button:active {
   transform: scale(0.97);
 }
+
+/* components/meters.css — laboratory styles */
+
+/* ---- Meter Panel ---- */
+
+.meter-panel {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  z-index: 10;
+  min-width: 17rem;
+  padding: .8rem 1.2rem;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, .08);
+}
+
+.experiment-sidepanel .meter-panel {
+  position: static;
+  margin: 0 0 1rem;
+  background: #ffffff;
+}
+
+.meter-label {
+  margin-bottom: .5rem;
+  font-size: 1.3rem;
+  color: #4b4d4d;
+}
+
+.voltmeter {
+  display: block;
+  padding: .7rem .3rem;
+  border: .5rem solid #444;
+  border-radius: .35rem;
+  background: #17201c;
+  box-shadow: inset 0 0 .7rem #000;
+  color: #f1ff8f;
+  font-family: monospace;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -.08em;
+}
+
+.polarity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .3rem;
+  margin-top: .8rem;
+  color: #5c6666;
+  font-size: 1.1rem;
+}
+
+.lead-label {
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: #6e2a2a;
+  color: white;
+  font-size: 1.4rem;
+}
+
+.lead-label:last-child {
+  background: #2f4e83;
+}
+
+.legend {
+  display: grid;
+  gap: .3rem;
+  margin-top: 1.2rem;
+  text-align: left;
+  font-size: 1.1rem;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 1.7rem;
+  height: .3rem;
+  margin-right: .4rem;
+  vertical-align: middle;
+}
+
+.legend-line.flux { background: #db8b22; }
+
+.legend-line.current { background: #168983; }
+
+/* ---- Readout Grid ---- */
+
+.readout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  padding: .8rem 1.6rem;
+}
+
+.readout-grid p {
+  display: flex;
+  justify-content: space-between;
+  gap: .8rem;
+  padding: .65rem 0;
+  border-bottom: 1px solid #dfe8e8;
+  font-size: 1.35rem;
+}
+
+.readout-grid p:nth-child(odd) {
+  margin-right: 1.6rem;
+}
+
+.readout-grid strong {
+  color: #087d76;
+  white-space: nowrap;
+}
+
+/* ---- Heat Readout ---- */
+
+.heat-readout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .3rem .6rem;
+  margin: .8rem;
+  padding: .7rem;
+  border-radius: .35rem;
+  background: #fff5e8;
+  color: #785523;
+  font-size: 1.1rem;
+}
+
+.heat-bar {
+  grid-column: 1/-1;
+  overflow: hidden;
+  height: .45rem;
+  border-radius: 1rem;
+  background: #ead9bf;
+}
+
+.heat-bar b {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #d88b2a;
+  transition: width .2s;
+}
+
+/* ---- EMF Table ---- */
+
+.emf-table-wrap {
+  margin: .8rem;
+}
+
+.table-heading {
+  margin-bottom: .4rem;
+  color: #087d76;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.emf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05rem;
+  text-align: left;
+}
+
+.emf-table th,
+.emf-table td {
+  padding: .35rem .25rem;
+  border-bottom: 1px solid #dce7e6;
+}
+
+.emf-table th {
+  color: #637170;
+  font-weight: 700;
+}
+
+.positive-reading { color: #087d76; }
+
+.negative-reading { color: #b54747; }
+
+/* ---- Observation Box ---- */
+
+.observation-box {
+  margin: 1rem 1.6rem;
+  padding: .9rem 1rem;
+  border-left: .4rem solid #089b93;
+  border-top: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.observation-heading {
+  display: block;
+  color: #087d76;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.observation-box p {
+  font-size: 1.3rem;
+}
+
+/* ---- Law Note ---- */

@@ -1,25 +1,12 @@
-/* ==========================================================================
+/* style.css — laboratory styles *//* ==========================================================================
    Faraday & Lenz Law - Main CSS Entry
    ========================================================================== */
 
 /* ---- Base Configurations ---- */
-@import './base/variables.css';
-@import './base/reset.css';
-@import './base/desktop-layout.css';
-@import './base/mobile-layout.css';
 
 /* ---- Component Styles ---- */
-@import './components/apparatus.css';
-@import './components/controls.css';
-@import './components/meters.css';
-@import './components/graphs.css';
-@import './components/reference.css';
-@import './components/workspace.css';
-@import './components/dashboard.css';
 
 /* ---- Utilities & Overlays ---- */
-@import './utilities/help.css';
-@import './utilities/responsive.css';
 
 :root {
   --px-prov-f04: "4719";
@@ -88,27 +75,6 @@
 }
 
 /* Banner Box for Summary */
-.side-details-banner {
-  background-color: #ffffff;
-  border: 2px solid #0f172a; /* Dark border outline */
-  border-radius: 6px;
-  padding: 8px 14px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  list-style: none; /* Hide default arrow marker */
-  display: flex;
-  align-items: center;
-}
-
-.side-details-banner::-webkit-details-marker {
-  display: none;
-}
-
-.banner-title {
-  color: #0891b2; /* Teal title color */
-  font-weight: 700;
-  font-size: 1rem;
-}
 
 /* Internal content card styling */
 .side-details#observations .readout-grid,
